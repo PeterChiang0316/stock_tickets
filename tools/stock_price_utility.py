@@ -22,6 +22,8 @@ class Stock:
         if not os.path.exists(self.stock_data_folder):
             print 'Initializing ... Creating stock private data folder'
             os.mkdir(self.stock_data_folder)
+        
+        self.cache = {}
             
     def is_stock_open(self, day):
     
@@ -34,7 +36,11 @@ class Stock:
         if not os.path.exists(filename):
             self.get_stock_finance(day)
         
-        date_list = pickle_load(filename)
+        if 'date_list_cache' in self.cache:
+            date_list = self.cache['date_list_cache']
+        else:
+            date_list = pickle_load(filename)
+            self.cache['date_list_cache'] = date_list
         assert min(map(int, date_list.keys())) <= int(day), 'Date too old, can not obtain'
         
         return day in date_list
@@ -117,21 +123,21 @@ class Stock:
     
     
     
-    def get_next_opening(date, diff=1):
+    def get_next_opening(self, date, diff=1):
         year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
     
         next_day = datetime.date(year, month, day) + datetime.timedelta(days=diff)
         year, month, day = next_day.year, next_day.month, next_day.day
         #print year, month, day
     
-        while not is_stock_open("%d%0.2d%0.2d" % (year, month, day)):
+        while not self.is_stock_open("%d%0.2d%0.2d" % (year, month, day)):
             #print 'in next day loop'
             current_date = datetime.date(year, month, day)
             yesterday_date = datetime.datetime.today().date() - datetime.timedelta(days=diff)
             assert current_date < yesterday_date, 'Can not use future days'
             next_day = datetime.date(year, month, day) + datetime.timedelta(days=diff)
             year, month, day = next_day.year, next_day.month, next_day.day
-            print year, month, day
+            #print year, month, day
         return "%d%0.2d%0.2d" % (year, month, day)
     
     def get_stock_finance(self, date):
@@ -180,6 +186,7 @@ class Stock:
             d[element['Date']] = element
         
         pickle_save(filename, d)
+        self.cache['date_list_cache'] = d
         
         assert min(map(int, d.keys())) <= int(date), 'Date too old, can not obtain'
             
