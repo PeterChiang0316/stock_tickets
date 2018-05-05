@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests, os, re, datetime, collections, math
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib
 import xlsxwriter
 from bs4 import BeautifulSoup
 import time, pickle, sys
@@ -91,13 +88,18 @@ class Stock:
             
         def JSONParser(d, key):
             dots = d[key]
-            l = []
-        
+            l = collections.OrderedDict()
             for dot in dots:
                 # time, deal_price, deal_num, high_price, low_price
                 #d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%Y\t%m\t%d\t%H\t%M\t')
                 d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%H%M\t')
-                l.append(d + '\t'.join(map(str, dot[1:])))
+                
+                l[d] = {
+                    'deal_price': float(dot[1]),
+                    'count'     : float(dot[2]),
+                    'high_price': float(dot[3]),
+                    'low_price' : float(dot[4])
+                }
         
             return l
             
@@ -106,8 +108,8 @@ class Stock:
                     'last_close_price': json['RealInfo']['PrvSalePrice'], 
                     'daily_magnitude': json['RealInfo']['MagnitudeOfPrice'],
                     'daily_amount': json['RealInfo']['Amount'],
-                    'low_price': json['RealInfo']['LowPrice'],
-                    'high_price': json['RealInfo']['HighPrice'],
+                    'lowest_price': json['RealInfo']['LowPrice'],
+                    'highest_price': json['RealInfo']['HighPrice'],
                     'data': JSONParser(json, 'DataPrice')
                     }
         
