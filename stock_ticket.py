@@ -8,7 +8,7 @@ def magnitude_test(stock):
     
     for date in ship.iterate_date('20180101'):
         info = ship.get_daily_info(date)
-        magnitude.append((info['highest_price'] - info['lowest_price']) / info['highest_price'])
+        magnitude.append((info.highest_price - info.lowest_price) / info.highest_price)
          
     print 'Stock magnitude > 0.02'
     print 'Count: %d' % sum(i > 0.02 for i in magnitude)

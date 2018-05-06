@@ -8,13 +8,14 @@ def demo():
     my_stock = Stock('2454')
     info = my_stock.get_daily_info('20180427')
     
+    # Both attribute and hash type access can be used
     # Open price
-    print 'open_price', info['open_price']
+    print 'open_price', info.open_price
     
     # Last close price
-    print 'last close price', info['last_close_price']
+    print 'last close price', info.last_close_price
     
-    # Daily magnitude
+    # Daily magnitude (using dictionary type)
     print 'daily magnitude', info['daily_magnitude']
     
     # Daily total transaction money
@@ -29,11 +30,11 @@ def demo():
     # Detail tracsaction status
     # You can use for loop to iterate all the element
     # It will follow the timing ordering
-    details = info['data']
+    details = info.data
     
     print 'date\tdeal\thigh\tlow\tcount'
     for minute, data in details.items()[:5]:
-        print minute, data['deal_price'], data['high_price'], data['low_price'], data['count']
+        print minute, data.deal_price, data.high_price, data.low_price, data.count
         
     # Query 3 consecutive daily info
     date = '20180427'

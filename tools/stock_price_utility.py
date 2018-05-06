@@ -5,7 +5,20 @@ import xlsxwriter
 from bs4 import BeautifulSoup
 import time, pickle, sys
 
+###########################################################
+# Global class
+###########################################################
 
+class Container(dict):
+    def __init__(self, *args, **kwargs):
+        super(Container, self).__init__(*args, **kwargs)
+        self.__dict__ = self
+
+class DailyInfo(Container):
+    pass
+
+class DetailInfo(Container):
+    pass
 ###########################################################
 # Stock class
 ###########################################################
@@ -100,24 +113,24 @@ class Stock:
                 #d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%Y\t%m\t%d\t%H\t%M\t')
                 d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%H%M\t')
                 
-                l[d] = {
+                l[d] = DailyInfo({
                     'deal_price': float(dot[1]),
                     'count'     : float(dot[2]),
                     'high_price': float(dot[3]),
                     'low_price' : float(dot[4])
-                }
+                })
         
             return l
             
         def json2dic(json):
-            return {'open_price': json['RealInfo']['OpenPrice'], 
+            return DetailInfo({'open_price': json['RealInfo']['OpenPrice'], 
                     'last_close_price': json['RealInfo']['PrvSalePrice'], 
                     'daily_magnitude': json['RealInfo']['MagnitudeOfPrice'],
                     'daily_amount': json['RealInfo']['Amount'],
                     'lowest_price': json['RealInfo']['LowPrice'],
                     'highest_price': json['RealInfo']['HighPrice'],
                     'data': JSONParser(json, 'DataPrice')
-                    }
+                    })
         
         return json2dic(json)
     
