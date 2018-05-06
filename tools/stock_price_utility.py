@@ -45,7 +45,7 @@ class Stock:
         
         return day in date_list
     
-    def get_stock_daily_info(self, date):
+    def get_daily_info(self, date):
     
         # Check date format
         assert len(date) == 8, 'Date format error, should be in yyyymmdd format ex: 20171011'
@@ -133,8 +133,8 @@ class Stock:
         while not self.is_stock_open("%d%0.2d%0.2d" % (year, month, day)):
             #print 'in next day loop'
             current_date = datetime.date(year, month, day)
-            yesterday_date = datetime.datetime.today().date() - datetime.timedelta(days=diff)
-            assert current_date < yesterday_date, 'Can not use future days'
+            yesterday_date = datetime.datetime.today().date() - datetime.timedelta(days=1)
+            #assert current_date < yesterday_date, 'Can not use future days'
             next_day = datetime.date(year, month, day) + datetime.timedelta(days=diff)
             year, month, day = next_day.year, next_day.month, next_day.day
             #print year, month, day
@@ -192,6 +192,15 @@ class Stock:
             
         return d[date]
     
+    def iterate_date(self, date_start, date_end=datetime.datetime.now().strftime('%Y%m%d')):
+        date_start = date_start if self.is_stock_open(date_start) else self.get_next_opening(date_start)
+        date_end = date_end if self.is_stock_open(date_end) else self.get_next_opening(date_end, diff=-1)
+        assert date_start < date_end, 'should not iterate through future'
+        
+        while date_start < date_end:
+            yield date_start
+            date_start = self.get_next_opening(date_start)
+        yield date_end
 ###########################################################
 # Private Function
 ###########################################################
