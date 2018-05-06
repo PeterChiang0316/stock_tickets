@@ -203,7 +203,7 @@ class Stock:
         
         assert min(map(int, d.keys())) <= int(date), 'Date too old, can not obtain'
             
-        return d[date]
+        return d[date] if date in d else None
     
     def iterate_date(self, date_start, date_end=datetime.datetime.now().strftime('%Y%m%d')):
         date_start = date_start if self.is_stock_open(date_start) else self.get_next_opening(date_start)
