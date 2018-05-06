@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import time
 from tools.stock_price_utility import Stock
+from multiprocessing import Pool, Lock
 
 def magnitude_test(stock):
     
-    ship = Stock('2454')
+    ship = Stock(stock)
     magnitude = []
     
     for date in ship.iterate_date('20180101'):
@@ -14,7 +16,15 @@ def magnitude_test(stock):
     print 'Count: %d' % sum(i > 0.02 for i in magnitude)
     print 'Total: %d' % len(magnitude)
     print 'percentage: %.2f' % (sum(i > 0.02 for i in magnitude) / float(len(magnitude)))
+    return (sum(i > 0.02 for i in magnitude) / float(len(magnitude)))
     
     
 if __name__ == '__main__':
+
+    pool = Pool()
+    lock = Lock()
+    
     magnitude_test('2454')
+            
+
+            
