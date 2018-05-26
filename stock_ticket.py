@@ -49,7 +49,7 @@ if __name__ == '__main__':
                   
     for s in stock_list:
         ship = Stock(s)
-        ship.update_daily_info(today_date='20180525')
+        ship.update_daily_info()
 
 
             
