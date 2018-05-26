@@ -196,6 +196,8 @@ class Stock:
         json = res.json()
         
         for element in json:
+            if int(element['DealQty']) == 0:
+                continue
             d[element['Date']] = element
         
         pickle_save(filename, d)
@@ -214,6 +216,23 @@ class Stock:
             yield date_start
             date_start = self.get_next_opening(date_start)
         yield date_end
+        
+    def update_daily_info(self, today_date=None):
+    
+        # Not specified date, use today
+        if not today_date:
+            today = datetime.datetime.today().date()
+            year, month, day = today.year, today.month, today.day
+            today_date = '%d%0.2d%0.2d' % (year, month, day)
+            print 'Today is %s' % today_date
+        
+        filename = os.path.join('data', self.stock, 'trans_' + today_date + '.pickle')
+        
+        if os.path.exists(filename):
+            print 'already download'
+        else:
+            pickle_save(filename, stock_daily_parser(self.stock))
+            
 ###########################################################
 # Private Function
 ###########################################################
@@ -326,6 +345,37 @@ def get_stock_cmkey():
 
     return cmkey, session
 
+def stock_daily_parser(stock):
+        
+    s = requests.Session()
+    data = {'is_check': '1'}
+    res = s.post('http://pchome.megatime.com.tw/stock/sto0/ock3/sid%s.html' % stock, data=data)
+    res.encoding = 'utf-8'
+    content = res.text.encode('utf-8')
+    #with open('tmp.html') as f:
+    #    content = f.read()
+    
+    content = re.sub(r'<font.*?>', '', content)
+    content = re.sub(r'</font.*?>', '', content)
+    soup = BeautifulSoup(content, 'html.parser')
+        
+    d = {}
+    
+    
+    for row in soup.select('table#tb_chart > tr')[1:-1]:
+        
+        time, buy, sell, deal, number, diff, acc = [td.text for td in row.find_all('td')]
+        time = '%06s' % time.replace(':', '')
+        
+        if sell == '--':
+            sell = buy
+            
+        d[time] = {'buy': float(buy), \
+                'sell': float(sell),\
+                'deal': float(deal),\
+                'number': float(number)}
+        
+    return collections.OrderedDict(sorted(d.items(), key=lambda k: k))
 
 
 
