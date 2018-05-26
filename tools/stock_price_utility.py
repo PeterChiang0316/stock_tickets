@@ -46,19 +46,18 @@ class Stock:
         '''
         filename = os.path.join(self.stock_data_folder, 'finance.pickle')
         
-        if not os.path.exists(filename):
-            self.get_stock_finance(day)
-        
         if 'date_list_cache' in self.cache:
             date_list = self.cache['date_list_cache']
         else:
+            self.get_stock_finance(day)
             date_list = pickle_load(filename)
             self.cache['date_list_cache'] = date_list
+            
         assert min(map(int, date_list.keys())) <= int(day), 'Date too old, can not obtain'
         
         return day in date_list
     
-    def get_daily_info(self, date):
+    def get_daily_info(self, date, every_transaction=False):
     
         # Check date format
         assert len(date) == 8, 'Date format error, should be in yyyymmdd format ex: 20171011'
@@ -66,8 +65,11 @@ class Stock:
         assert 1 <= int(date[4:6]) <= 12, 'Month error'
         assert 1 <= int(date[6:]) <= 31, 'Day error'
         assert self.is_stock_open(date), 'Stock date error % s' % date
-    
+        
         folder = os.path.join('data', self.stock)
+        
+        
+
         filename = os.path.join('data', self.stock, date+'.pickle')
     
         if os.path.exists(filename):
@@ -121,6 +123,14 @@ class Stock:
                 })
         
             return l
+        
+        def tansaction_info_parser():
+        
+            # If we need daily transction info, search if the data is availiable
+            filename = os.path.join('data', self.stock, 'trans_'+date+'.pickle')
+            assert os.path.exists(filename)
+            d = pickle_load(filename)
+            return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())    
             
         def json2dic(json):
             return DetailInfo({'open_price': json['RealInfo']['OpenPrice'], 
@@ -129,7 +139,7 @@ class Stock:
                     'daily_amount': json['RealInfo']['Amount'],
                     'lowest_price': json['RealInfo']['LowPrice'],
                     'highest_price': json['RealInfo']['HighPrice'],
-                    'data': JSONParser(json, 'DataPrice')
+                    'data': JSONParser(json, 'DataPrice') if not every_transaction else tansaction_info_parser()
                     })
         
         return json2dic(json)
@@ -163,7 +173,7 @@ class Stock:
             
             if date in d:
                 return d[date]
-            elif max(map(int, d.keys())) < self.stock:
+            elif max(map(int, d.keys())) < date:
                 pass
             else:
                 assert date in d, 'The stock %s is not open at %s' % (self.stock, date)
@@ -364,7 +374,7 @@ def stock_daily_parser(stock):
     
     for row in soup.select('table#tb_chart > tr')[1:-1]:
         
-        time, buy, sell, deal, number, diff, acc = [td.text for td in row.find_all('td')]
+        time, buy, sell, deal, diff, count, acc = [td.text for td in row.find_all('td')]
         time = '%06s' % time.replace(':', '')
         
         if sell == '--':
@@ -373,7 +383,8 @@ def stock_daily_parser(stock):
         d[time] = {'buy': float(buy), \
                 'sell': float(sell),\
                 'deal': float(deal),\
-                'number': float(number)}
+                'diff': float(diff),\
+                'count': float(count)}
         
     return collections.OrderedDict(sorted(d.items(), key=lambda k: k))
 

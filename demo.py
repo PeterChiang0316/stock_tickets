@@ -44,9 +44,15 @@ def demo():
         date = my_stock.get_next_opening(date)
 
     # Query iteratively from 20180427 to today
-    for date in my_stock.iterate_date('20180427'):
+    for date in my_stock.iterate_date('20180523'):
         print date
-        
+    
+    info = my_stock.get_daily_info('20180525', every_transaction=True)
+    details = info.data
+    
+    for tick, data in details.items()[:5]:
+        print tick, data.deal, data.buy, data.sell, data.count, data.diff
+    
     end_time = time.time()
     
     print 'Totol time: %.2f' % (end_time - start_time)
