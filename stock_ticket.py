@@ -74,17 +74,21 @@ def stock_win_point_test(stock, minutes=5):
         
         high_number, low_number = 0, 0
         
-        for interval_tick, interval_data in ticks.items():
+        items = ticks.items()
         
-            if interval_data.deal >= interval_data.sell:
-                high_number += interval_data.count
-            else:
-                low_number += interval_data.count
-                
+        for idx, element in enumerate(items):
+        
+            interval_tick, interval_data = element
+            
             if interval_data.deal >= buy_price:
                 break
                 
-        print time_diff(tick, interval_tick), high_number, low_number, (high_number / (high_number+low_number)), price, max_value, buy_price, interval_data.deal 
+            if interval_data.deal >= interval_data.sell:
+                high_number += interval_data.count
+            else:
+                low_number += interval_data.count    
+                
+        print time_diff(tick, interval_tick), high_number, low_number, (high_number / (high_number+low_number)), price, max_value, buy_price, items[idx-1][1].deal 
         
         #print tick, , data.buy, data.sell, data.count, data.diff
         
@@ -111,7 +115,7 @@ if __name__ == '__main__':
     if args.update:
         for s in stock_list:
             ship = Stock(s)
-            ship.update_daily_info('20180615')
+            ship.update_daily_info()
         exit(0)
     
     for s in stock_list[:]:   
