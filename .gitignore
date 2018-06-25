@@ -1,4 +1,4 @@
-
+.idea
 *.pyc
 *.pickle
 !trans_*
