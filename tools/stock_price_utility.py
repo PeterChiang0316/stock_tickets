@@ -4,6 +4,7 @@ import numpy as np
 import xlsxwriter
 from bs4 import BeautifulSoup
 import time, pickle, sys
+import StringIO
 
 ###########################################################
 # Global class
@@ -267,7 +268,9 @@ def pickle_load(filename):
         return None
     
     with open(filename, 'rb') as f:
-        data = pickle.load(f)
+        data = f.read().replace(b'\r\n', b'\n')
+        output = StringIO.StringIO(data)
+        data = pickle.load(output)
         
     return data
     
