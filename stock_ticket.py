@@ -1,98 +1,133 @@
 # -*- coding: utf-8 -*-
 import time, datetime, collections
 from tools.stock_price_utility import Stock
+from tools.stock_sim import StockSim
 from multiprocessing import Pool, Lock
 import argparse
 
+
 def magnitude_test(stock):
-    
     ship = Stock(stock)
     magnitude = []
-    
+
     for date in ship.iterate_date('20180216'):
         info = ship.get_daily_info(date)
-        #print date, info
+        # print date, info
         magnitude.append((info.highest_price - info.lowest_price) / info.highest_price)
-         
-    #print 'Stock magnitude > 0.02'
-    #print 'Count: %d' % sum(i > 0.02 for i in magnitude)
-    #print 'Total: %d' % len(magnitude)
-    #print 'percentage: %.2f' % (sum(i > 0.02 for i in magnitude) / float(len(magnitude)))
-    return (sum(i > 0.02 for i in magnitude) / float(len(magnitude)))
-    
-def stock_win_point_test(stock, minutes=5):
 
+    # print 'Stock magnitude > 0.02'
+    # print 'Count: %d' % sum(i > 0.02 for i in magnitude)
+    # print 'Total: %d' % len(magnitude)
+    # print 'percentage: %.2f' % (sum(i > 0.02 for i in magnitude) / float(len(magnitude)))
+    return sum(i > 0.02 for i in magnitude / float(len(magnitude)))
+
+
+def stock_win_point_test(transaction, minutes=5, verbose=True):
     def tick_after_minutes(time, minutes):
-        now = datetime.datetime(2018, 5, 25, time/10000, (time/100) % 100, time % 100)
+        now = datetime.datetime(2018, 5, 25, time / 10000, (time / 100) % 100, time % 100)
         after = now + datetime.timedelta(minutes=minutes)
         return int("%02d%02d%02d" % (after.hour, after.minute, after.second))
-        
+
     def get_element_list(l, attr):
         return [e[attr] for e in l]
-        
+
     def time_diff(t1, t2):
-        t1 = datetime.datetime(2018, 5, 25, t1/10000, (t1/100) % 100, t1 % 100)
-        t2 = datetime.datetime(2018, 5, 25, t2/10000, (t2/100) % 100, t2 % 100)
+        t1 = datetime.datetime(2018, 5, 25, t1 / 10000, (t1 / 100) % 100, t1 % 100)
+        t2 = datetime.datetime(2018, 5, 25, t2 / 10000, (t2 / 100) % 100, t2 % 100)
         return (t2 - t1).total_seconds()
-        
-    ship = Stock(stock)
-    
-    info = ship.get_daily_info('20180525', every_transaction=True)
-    details = info.data
-    
+
+    statistics = []
+
     trace = collections.OrderedDict()
-    
-    for k, v in details.items():
+
+    for k, v in transaction.items():
         trace[int(k)] = v
-    
+
     tick_begin = trace.keys()[0]
-    
+
     for tick, data in trace.items():
-        
+
         if tick < tick_begin:
             continue
-            
-        price = data.deal
+
+        if tick < 91000:
+            continue
+
+        if tick > 130000:
+            break
+
+        # The price we can buy at that moment
+        price = data.sell
         target_price = price * 1.015
 
         next_tick = tick_after_minutes(tick, minutes)
         ticks = collections.OrderedDict()
-        
+
+        # Gather the tick in the interval
         for interval_tick, interval_data in trace.items():
-            if tick <= interval_tick and interval_tick <= next_tick:
+            if tick < interval_tick <= next_tick:
                 ticks[interval_tick] = interval_data
 
-        max_value = max(get_element_list(ticks.values(), 'deal'))
-        if max_value > target_price:
-            tick_begin = next_tick
-        else:
+        if not ticks:
             continue
-        
-        #print ticks.items()
-        
+
+        max_value = max(get_element_list(ticks.values(), 'buy'))
+
+        if max_value < target_price:
+            continue
+
+        # Find the tick that we can buy and earn 1%
         buy_price = max_value * 0.99
-        
+
         high_number, low_number = 0, 0
-        
+
         items = ticks.items()
-        
+
         for idx, element in enumerate(items):
-        
+
             interval_tick, interval_data = element
-            
-            if interval_data.deal >= buy_price:
+
+            if interval_data.sell >= buy_price:
                 break
-                
+
             if interval_data.deal >= interval_data.sell:
                 high_number += interval_data.count
             else:
-                low_number += interval_data.count    
-                
-        print time_diff(tick, interval_tick), high_number, low_number, (high_number / (high_number+low_number)), price, max_value, buy_price, items[idx-1][1].deal 
-        
-        #print tick, , data.buy, data.sell, data.count, data.diff
-        
-    
+                low_number += interval_data.count
+
+        win_element = items[idx - 1]
+        win_tick, win_data = win_element
+        win_inout_ratio = (100 * high_number / (high_number + low_number))
+
+        if win_inout_ratio < 70:
+            #print 'Ratio does not exceed threshold'
+            continue
+
+        acc = 0
+        for i in items:
+            acc += i[1].count
+            #print str(i), acc
+
+        if verbose:
+            print '-------- Report -----------'
+            print 'Start point: %d' % tick
+            print 'Win point: %d' % win_tick
+            print 'Duration: %d s' % time_diff(tick, win_tick)
+            print 'Sell/Buy number %d/%d' % (high_number, low_number)
+            print 'InOut Ratio %.2f%%' % win_inout_ratio
+            print 'Initial price %.2f' % price
+            print 'Max sell price %.2f in future %d minutes' % (max_value, minutes)
+            print 'Min buy price %.2f' % buy_price
+            print 'Actual buy price %.2f' % win_data.sell
+            print '---------------------------'
+
+        tick_begin = next_tick
+        # print tick, , data.buy, data.sell, data.count, data.diff
+        statistics.append((time_diff(tick, win_tick), high_number, win_inout_ratio))
+
+    return statistics
+
+
 if __name__ == '__main__':
     '''
     Algorithm:
@@ -103,27 +138,38 @@ if __name__ == '__main__':
                 Find the earliest tick that we can buy and earn 1%
                 Calculate the accumalated number since the initial tick
                 Then we can know the 
-    '''   
-    stock_list = ['2454', '2439', '2330', '2455', '2448', '2377', '3035',\
-                  '2456', '2313', '5269', '2383', '1312', '2353', '1707',\
+    '''
+    stock_list = ['2454', '2439', '2455', '2448', '2377', '3035',
+                  '2456', '2313', '5269', '2383', '1312', '2353', '1707',
                   '3443', '4906']
-    
+
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--update', help='Get today\'s data', action='store_true')    
+    parser.add_argument('--update', help='Get today\'s data', action='store_true')
     args = parser.parse_args()
-    
+
     if args.update:
         for s in stock_list:
             ship = Stock(s)
             ship.update_daily_info()
         exit(0)
-    
-    for s in stock_list[:]:   
-        print s
-        stock_win_point_test(s, minutes=5)  
-    
-    
-    
-    
-    
-            
+
+    for s in stock_list[2:3]:
+        ship = Stock(s)
+        money = 1000000
+        for date in ship.iterate_date('20180525'):
+
+            info = ship.get_daily_info(date, every_transaction=True)
+
+            transaction = info.data
+
+            if not transaction:
+                continue
+
+            win_standard = stock_win_point_test(transaction, minutes=5, verbose=False)
+
+            if win_standard:
+                print '[%s] Date: %s' % (s, date)
+                print s, win_standard
+                sim = StockSim()
+                money = sim.execute(money, transaction, *win_standard[0])
+                print money

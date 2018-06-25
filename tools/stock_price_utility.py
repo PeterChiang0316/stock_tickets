@@ -124,11 +124,14 @@ class Stock:
         
             return l
         
-        def tansaction_info_parser():
+        def transaction_info_parser():
         
             # If we need daily transction info, search if the data is availiable
             filename = os.path.join('data', self.stock, 'trans_'+date+'.pickle')
-            assert os.path.exists(filename)
+
+            if not os.path.exists(filename):
+                return None
+
             d = pickle_load(filename)
             return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())    
             
@@ -139,7 +142,7 @@ class Stock:
                     'daily_amount': json['RealInfo']['Amount'],
                     'lowest_price': json['RealInfo']['LowPrice'],
                     'highest_price': json['RealInfo']['HighPrice'],
-                    'data': JSONParser(json, 'DataPrice') if not every_transaction else tansaction_info_parser()
+                    'data': JSONParser(json, 'DataPrice') if not every_transaction else transaction_info_parser()
                     })
         
         return json2dic(json)
