@@ -133,8 +133,8 @@ class Stock:
                 return None
 
             d = pickle_load(filename)
-            return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())    
-            
+            return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())
+
         def json2dic(json):
             return DetailInfo({'open_price': json['RealInfo']['OpenPrice'], 
                     'last_close_price': json['RealInfo']['PrvSalePrice'], 
@@ -267,8 +267,11 @@ def pickle_load(filename):
         return None
     
     with open(filename, 'rb') as f:
-        data = pickle.load(f)
-        
+        #data = pickle.load(f)
+        data = f.read().replace(b'\r\n', b'\n')
+        output = StringIO.StringIO(data)
+        data = pickle.load(output)
+
     return data
     
 def xlsWriter(filename, work_list):
