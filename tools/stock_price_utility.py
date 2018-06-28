@@ -4,6 +4,7 @@ import numpy as np
 import xlsxwriter
 from bs4 import BeautifulSoup
 import time, pickle, sys
+import StringIO
 
 ###########################################################
 # Global class
