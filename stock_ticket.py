@@ -153,9 +153,11 @@ if __name__ == '__main__':
             ship.update_daily_info()
         exit(0)
 
-    for s in stock_list[2:3]:
+    for s in stock_list[13:]:
         ship = Stock(s)
         money = 1000000
+        win_count, lose_count = 0, 0
+        print 'Start test %s' % s
         for date in ship.iterate_date('20180525'):
 
             info = ship.get_daily_info(date, every_transaction=True)
@@ -166,10 +168,31 @@ if __name__ == '__main__':
                 continue
 
             win_standard = stock_win_point_test(transaction, minutes=5, verbose=False)
+            #win_standard = False
 
             if win_standard:
                 print '[%s] Date: %s' % (s, date)
                 print s, win_standard
+
+                # Try to use the strict one
+                win_standard = sorted(win_standard, key=lambda v: (v[1]/v[0]))
+                print win_standard
+
+                if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
+                    print 'Interval time too short'
+                    continue
+
+                # Percentage
+                percent = max(win_standard, key=lambda v: v[2])
+
                 sim = StockSim()
-                money = sim.execute(money, transaction, *win_standard[0])
-                print money
+                money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], verbose=True)
+                win_count += wc
+                lose_count += lc
+                #print money
+
+            #print '[%s] Date: %s' % (s, date)
+            #sim = StockSim()
+            #money, wc, lc = sim.execute(money, transaction, 60, 300, 90)
+
+        print win_count, lose_count

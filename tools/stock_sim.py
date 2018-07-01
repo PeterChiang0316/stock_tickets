@@ -15,7 +15,7 @@ class StockSim:
     def __init__(self):
         self.cache = {}
 
-    def execute(self, money, transaction_list, seconds, number, sell_buy_rate, debug=True):
+    def execute(self, money, transaction_list, seconds, number, sell_buy_rate, verbose=True):
 
         def tick_after_seconds(time, seconds):
             now = datetime.datetime(2018, 5, 25, time / 10000, (time / 100) % 100, time % 100)
@@ -23,11 +23,16 @@ class StockSim:
             return int("%02d%02d%02d" % (after.hour, after.minute, after.second))
 
         def dbg_print(s):
-            if debug:
-                print str(s)
+            if verbose:
+                print s
 
-        print 'initial money ', money
+        dbg_print ('initial money %.2f' % money)
+        dbg_print ('seconds %.2f' % seconds)
+        dbg_print ('number %.2f' % number)
+        dbg_print ('sell_buy_rate %.2f' % sell_buy_rate)
+
         is_brought, count = False, 0
+        win_count, lose_count = 0, 0
 
         trace = collections.OrderedDict()
         for k, v in transaction_list.items():
@@ -46,6 +51,7 @@ class StockSim:
                     dbg_print('execute remain')
                     money += data.buy * 1000
                     count -= 1
+                    lose_count += 1
                 break
 
             if is_brought:
@@ -56,11 +62,13 @@ class StockSim:
                     money += data.buy * 1000
                     is_brought = False
                     count -= 1
+                    win_count += 1
                 elif data.buy <= lose_price:
                     dbg_print('lose')
                     money += data.buy * 1000
                     is_brought = False
                     count -= 1
+                    lose_count += 1
             else:
                 buy, sell = 0, 0
 
@@ -77,13 +85,13 @@ class StockSim:
                 if sell >= number and (100 * sell / (buy + sell)) >= sell_buy_rate and money > data.sell * 1000:
                     money -= (data.sell * 1000) * self.tax_rate
                     is_brought = True
-                    win_price, lose_price = data.sell * 1.01, data.sell * 0.98
+                    win_price, lose_price = data.sell * 1.01, data.sell * 0.99
                     count += 1
                     print buy, sell, tick, interval_start, money, data.sell, win_price, lose_price, (100 * sell / (buy + sell))
 
-        dbg_print(money)
+        dbg_print('Final money %.2f' % money)
         assert count == 0
-        return money
+        return money, win_count, lose_count
 
 
 ###########################################################
