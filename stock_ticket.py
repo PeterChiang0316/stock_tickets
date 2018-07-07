@@ -43,6 +43,9 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
     for k, v in transaction.items():
         trace[int(k)] = v
 
+    if max(trace.keys()) < 130000:
+        return []
+
     tick_begin = trace.keys()[0]
 
     for tick, data in trace.items():
@@ -79,7 +82,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         # Find the tick that we can buy and earn 1%
         buy_price = max_value * 0.99
 
-        high_number, low_number = 0, 0
+        high_number, low_number, main = 0, 0, []
 
         items = ticks.items()
 
@@ -92,6 +95,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
 
             if interval_data.deal >= interval_data.sell:
                 high_number += interval_data.count
+                main.append(interval_data.count)
             else:
                 low_number += interval_data.count
 
@@ -102,6 +106,9 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         if win_inout_ratio < 70:
             #print 'Ratio does not exceed threshold'
             continue
+#
+        main = sorted(main, reverse=True)
+        main_ratio = sum(main[:3]) / sum(main)
 
         acc = 0
         for i in items:
@@ -119,11 +126,12 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
             print 'Max sell price %.2f in future %d minutes' % (max_value, minutes)
             print 'Min buy price %.2f' % buy_price
             print 'Actual buy price %.2f' % win_data.sell
+            print 'Main ratio %.2f' % main_ratio
             print '---------------------------'
 
         tick_begin = next_tick
         # print tick, , data.buy, data.sell, data.count, data.diff
-        statistics.append((time_diff(tick, win_tick), high_number, win_inout_ratio))
+        statistics.append((time_diff(tick, win_tick), high_number, win_inout_ratio, main_ratio))
 
     return statistics
 
@@ -153,10 +161,12 @@ if __name__ == '__main__':
             ship.update_daily_info()
         exit(0)
 
-    for s in stock_list[13:]:
+    money = 1000000
+    win_count, lose_count = 0, 0
+    for s in stock_list[:]:
+
         ship = Stock(s)
-        money = 1000000
-        win_count, lose_count = 0, 0
+
         print 'Start test %s' % s
         for date in ship.iterate_date('20180525'):
 
@@ -167,26 +177,28 @@ if __name__ == '__main__':
             if not transaction:
                 continue
 
-            win_standard = stock_win_point_test(transaction, minutes=5, verbose=False)
+            print '[%s] Date: %s' % (s, date)
+
+            win_standard = stock_win_point_test(transaction, minutes=5, verbose=True)
             #win_standard = False
 
             if win_standard:
-                print '[%s] Date: %s' % (s, date)
+
                 print s, win_standard
 
                 # Try to use the strict one
                 win_standard = sorted(win_standard, key=lambda v: (v[1]/v[0]))
                 print win_standard
 
-                if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
-                    print 'Interval time too short'
-                    continue
+                #if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
+                #    print 'Interval time too short'
+                #    continue
 
                 # Percentage
                 percent = max(win_standard, key=lambda v: v[2])
 
                 sim = StockSim()
-                money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], verbose=True)
+                money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
                 win_count += wc
                 lose_count += lc
                 #print money
@@ -196,3 +208,4 @@ if __name__ == '__main__':
             #money, wc, lc = sim.execute(money, transaction, 60, 300, 90)
 
         print win_count, lose_count
+    print win_count, lose_count, money

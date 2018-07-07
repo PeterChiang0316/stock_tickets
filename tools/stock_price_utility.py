@@ -47,7 +47,7 @@ class Stock:
         '''
         filename = os.path.join(self.stock_data_folder, 'finance.pickle')
         
-        if 'date_list_cache' in self.cache:
+        if 'date_list_cache' in self.cache and int(day) <= min(map(int, self.cache['date_list_cache'].keys())):
             date_list = self.cache['date_list_cache']
         else:
             self.get_stock_finance(day)
@@ -222,9 +222,10 @@ class Stock:
         return d[date] if date in d else None
     
     def iterate_date(self, date_start, date_end=datetime.datetime.now().strftime('%Y%m%d')):
+
         date_start = date_start if self.is_stock_open(date_start) else self.get_next_opening(date_start)
         date_end = date_end if self.is_stock_open(date_end) else self.get_next_opening(date_end, diff=-1)
-        assert date_start < date_end, 'should not iterate through future'
+        assert date_start < date_end, 'should not iterate from %s through future %s' % (date_start, date_end)
         
         while date_start < date_end:
             yield date_start
