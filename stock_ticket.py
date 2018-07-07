@@ -180,7 +180,6 @@ if __name__ == '__main__':
             print '[%s] Date: %s' % (s, date)
 
             win_standard = stock_win_point_test(transaction, minutes=5, verbose=True)
-            #win_standard = False
 
             if win_standard:
 
@@ -203,9 +202,6 @@ if __name__ == '__main__':
                 lose_count += lc
                 #print money
 
-            #print '[%s] Date: %s' % (s, date)
-            #sim = StockSim()
-            #money, wc, lc = sim.execute(money, transaction, 60, 300, 90)
 
         print win_count, lose_count
     print win_count, lose_count, money
