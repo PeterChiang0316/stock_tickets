@@ -23,13 +23,11 @@ def magnitude_test(stock):
 
 
 def stock_win_point_test(transaction, minutes=5, verbose=True):
-    def tick_after_minutes(time, minutes):
-        now = datetime.datetime(2018, 5, 25, time / 10000, (time / 100) % 100, time % 100)
-        after = now + datetime.timedelta(minutes=minutes)
-        return int("%02d%02d%02d" % (after.hour, after.minute, after.second))
 
-    def get_element_list(l, attr):
-        return [e[attr] for e in l]
+    def tick_after_minutes(t, m):
+        now = datetime.datetime(2018, 5, 25, t / 10000, (t / 100) % 100, t % 100)
+        after = now + datetime.timedelta(minutes=m)
+        return int("%02d%02d%02d" % (after.hour, after.minute, after.second))
 
     def time_diff(t1, t2):
         t1 = datetime.datetime(2018, 5, 25, t1 / 10000, (t1 / 100) % 100, t1 % 100)
@@ -43,6 +41,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
     for k, v in transaction.items():
         trace[int(k)] = v
 
+    # For work around some data lost error
     if max(trace.keys()) < 130000:
         return []
 
@@ -50,6 +49,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
 
     for tick, data in trace.items():
 
+        # Once we buy the tickets, skip the
         if tick < tick_begin:
             continue
 
@@ -74,7 +74,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         if not ticks:
             continue
 
-        max_value = max(get_element_list(ticks.values(), 'buy'))
+        max_value = max(ticks.values(), key= lambda v: v['buy'])['buy']
 
         if max_value < target_price:
             continue
@@ -101,12 +101,12 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
 
         win_element = items[idx - 1]
         win_tick, win_data = win_element
-        win_inout_ratio = (100 * high_number / (high_number + low_number))
+        win_inout_ratio = (high_number / (high_number + low_number))
 
-        if win_inout_ratio < 70:
+        # if win_inout_ratio < 70:
             #print 'Ratio does not exceed threshold'
-            continue
-#
+        #    continue
+
         main = sorted(main, reverse=True)
         main_ratio = sum(main[:3]) / sum(main)
 
@@ -131,7 +131,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
 
         tick_begin = next_tick
         # print tick, , data.buy, data.sell, data.count, data.diff
-        statistics.append((time_diff(tick, win_tick), high_number, win_inout_ratio, main_ratio))
+        statistics.append([time_diff(tick, win_tick), high_number, win_inout_ratio, main_ratio])
 
     return statistics
 
@@ -163,7 +163,9 @@ if __name__ == '__main__':
 
     money = 1000000
     win_count, lose_count = 0, 0
-    for s in stock_list[:]:
+    f_result = open('train_data.txt', 'w')
+
+    for s in stock_list[1:]:
 
         ship = Stock(s)
 
@@ -179,29 +181,30 @@ if __name__ == '__main__':
 
             print '[%s] Date: %s' % (s, date)
 
-            win_standard = stock_win_point_test(transaction, minutes=5, verbose=True)
+            win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
 
-            if win_standard:
+            for win_standard in win_standards:
 
-                print s, win_standard
+                result = map(str, [s, date] + win_standard)
+                f_result.write(' '.join(result) + '\n')
 
-                # Try to use the strict one
-                win_standard = sorted(win_standard, key=lambda v: (v[1]/v[0]))
+                # Try every possible combination
+                #win_standard = sorted(win_standard, key=lambda v: (v[1]/v[0]))
                 print win_standard
 
-                #if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
+                # if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
                 #    print 'Interval time too short'
                 #    continue
 
                 # Percentage
-                percent = max(win_standard, key=lambda v: v[2])
+                #percent = max(win_standard, key=lambda v: v[2])
 
-                sim = StockSim()
-                money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
-                win_count += wc
-                lose_count += lc
+                #sim = StockSim()
+                #money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
+                #win_count += wc
+                #lose_count += lc
                 #print money
 
-
-        print win_count, lose_count
-    print win_count, lose_count, money
+    f_result.close()
+        #print win_count, lose_count
+    #print win_count, lose_count, money
