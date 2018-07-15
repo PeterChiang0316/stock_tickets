@@ -1,5 +1,7 @@
 import time
 from tools.stock_price_utility import Stock
+from sklearn import svm
+import random
 
 def demo():
     start_time = time.time()
@@ -44,7 +46,7 @@ def demo():
         date = my_stock.get_next_opening(date)
 
     # Query iteratively from 20180427 to today
-    for date in my_stock.iterate_date('20180523'):
+    for date in my_stock.iterate_date('20180523', '20180605'):
         print date
     
     info = my_stock.get_daily_info('20180525', every_transaction=True)
@@ -52,9 +54,19 @@ def demo():
     
     for tick, data in details.items()[:5]:
         print tick, data.deal, data.buy, data.sell, data.count, data.diff
-    
+
+    X = [[random.uniform(0, 1), random.uniform(0, 1)] for x in range(10000)]
+    y = [(x[0] * x[1]) for x in X]
+
+    clf = svm.SVR()
+    clf.fit(X, y)
+
+    print clf.predict([[0.5, 0.7]])
+
     end_time = time.time()
-    
-    print 'Totol time: %.2f' % (end_time - start_time)
+
+    print 'Total time: %.2f' % (end_time - start_time)
+
 if __name__ == '__main__':
+    
     demo()

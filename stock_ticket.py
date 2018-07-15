@@ -2,7 +2,7 @@
 import time, datetime, collections
 from tools.stock_price_utility import Stock
 from tools.stock_sim import StockSim
-from multiprocessing import Pool, Lock
+from multiprocessing import Pool, Lock, Queue
 import argparse
 
 
@@ -23,7 +23,6 @@ def magnitude_test(stock):
 
 
 def stock_win_point_test(transaction, minutes=5, verbose=True):
-
     def tick_after_minutes(t, m):
         now = datetime.datetime(2018, 5, 25, t / 10000, (t / 100) % 100, t % 100)
         after = now + datetime.timedelta(minutes=m)
@@ -74,7 +73,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         if not ticks:
             continue
 
-        max_value = max(ticks.values(), key= lambda v: v['buy'])['buy']
+        max_value = max(ticks.values(), key=lambda v: v['buy'])['buy']
 
         if max_value < target_price:
             continue
@@ -104,7 +103,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         win_inout_ratio = (high_number / (high_number + low_number))
 
         # if win_inout_ratio < 70:
-            #print 'Ratio does not exceed threshold'
+        # print 'Ratio does not exceed threshold'
         #    continue
 
         main = sorted(main, reverse=True)
@@ -113,7 +112,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
         acc = 0
         for i in items:
             acc += i[1].count
-            #print str(i), acc
+            # print str(i), acc
 
         if verbose:
             print '-------- Report -----------'
@@ -136,17 +135,53 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
     return statistics
 
 
+def execute(s):
+    ship = Stock(s)
+
+    print 'Start test %s' % s
+
+    for date in ship.iterate_date('20180525'):
+        print '[%s] Date: %s' % (s, date)
+        info = ship.get_daily_info(date, every_transaction=True)
+
+        transaction = info.data
+
+        if not transaction:
+            continue
+
+        print '[%s] Date: %s' % (s, date)
+
+        win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
+
+        for win_standard in win_standards:
+            result = map(str, [s, date] + win_standard)
+
+            lock.acquire()
+            print 'Acquire lock'
+            #output_file.write(' '.join(result) + '\n')
+            queue.put(result)
+            lock.release()
+            print 'Release lock'
+
+            # Try every possible combination
+            print win_standard
+
+            # sim = StockSim()
+            # money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
+            # win_count += wc
+            # lose_count += lc
+            #print money
+
+
+def init(l, q):
+    global lock
+    global queue
+    lock = l
+    queue = q
+
+
 if __name__ == '__main__':
-    '''
-    Algorithm:
-        1. Scan through the next N minute, find the max deal price
-        2. Get the tick match the max deal price and check if it rise up over the threshold
-            if no: continue
-            else:
-                Find the earliest tick that we can buy and earn 1%
-                Calculate the accumalated number since the initial tick
-                Then we can know the 
-    '''
+
     stock_list = ['2454', '2439', '2455', '2448', '2377', '3035',
                   '2456', '2313', '5269', '2383', '1312', '2353', '1707',
                   '3443', '4906']
@@ -161,50 +196,32 @@ if __name__ == '__main__':
             ship.update_daily_info()
         exit(0)
 
-    money = 1000000
-    win_count, lose_count = 0, 0
-    f_result = open('train_data.txt', 'w')
+    # Real simulation
+    else:
 
-    for s in stock_list[1:]:
+        start_time = time.time()
 
-        ship = Stock(s)
+        lock = Lock()
+        queue = Queue()
 
-        print 'Start test %s' % s
-        for date in ship.iterate_date('20180525'):
+        pool = Pool(initializer=init, initargs=(lock, queue))
 
-            info = ship.get_daily_info(date, every_transaction=True)
+        money = 1000000
+        win_count, lose_count = 0, 0
 
-            transaction = info.data
+        res = [pool.apply_async(execute, (s,)) for s in stock_list]
+        results = [r.get() for r in res]
 
-            if not transaction:
-                continue
+        f_result = open('train_data.txt', 'w')
 
-            print '[%s] Date: %s' % (s, date)
+        while not queue.empty():
+            f_result.write(' '.join(queue.get()) + '\n')
 
-            win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
+        f_result.close()
 
-            for win_standard in win_standards:
+        end_time = time.time()
 
-                result = map(str, [s, date] + win_standard)
-                f_result.write(' '.join(result) + '\n')
+        print 'Total time: %.2f' % (end_time - start_time)
 
-                # Try every possible combination
-                #win_standard = sorted(win_standard, key=lambda v: (v[1]/v[0]))
-                print win_standard
-
-                # if win_standard[-1][0] < 60 or win_standard[-1][0] > 180:
-                #    print 'Interval time too short'
-                #    continue
-
-                # Percentage
-                #percent = max(win_standard, key=lambda v: v[2])
-
-                #sim = StockSim()
-                #money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
-                #win_count += wc
-                #lose_count += lc
-                #print money
-
-    f_result.close()
-        #print win_count, lose_count
-    #print win_count, lose_count, money
+        # print win_count, lose_count
+    # print win_count, lose_count, money
