@@ -3,9 +3,9 @@ import requests, os, re, datetime, collections, math
 import numpy as np
 import xlsxwriter
 from bs4 import BeautifulSoup
-import time, pickle, sys
+import time, sys
 import StringIO
-
+import cPickle as pickle
 ###########################################################
 # Global class
 ###########################################################
@@ -46,7 +46,6 @@ class Stock:
         :return: True if stock opens in specified day
         '''
         filename = os.path.join(self.stock_data_folder, 'finance.pickle')
-        
         if 'date_list_cache' in self.cache and int(day) <= min(map(int, self.cache['date_list_cache'].keys())):
             date_list = self.cache['date_list_cache']
         else:
@@ -172,9 +171,8 @@ class Stock:
         filename = os.path.join('data', self.stock, 'finance.pickle')
 
         if os.path.exists(filename):
-        
+
             d = pickle_load(filename)
-            
             if date in d:
                 return d[date]
             elif max(map(int, d.keys())) < date:
@@ -226,7 +224,7 @@ class Stock:
         date_start = date_start if self.is_stock_open(date_start) else self.get_next_opening(date_start)
         date_end = date_end if self.is_stock_open(date_end) else self.get_next_opening(date_end, diff=-1)
         assert date_start < date_end, 'should not iterate from %s through future %s' % (date_start, date_end)
-        
+
         while date_start < date_end:
             yield date_start
             date_start = self.get_next_opening(date_start)
@@ -267,9 +265,8 @@ def pickle_load(filename):
     '''
     if not os.path.exists(filename):
         return None
-    
+
     with open(filename, 'rb') as f:
-        #data = pickle.load(f)
         data = f.read().replace(b'\r\n', b'\n')
         output = StringIO.StringIO(data)
         data = pickle.load(output)

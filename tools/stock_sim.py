@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import requests, os, re, datetime, collections, math
-import time, pickle, sys
-
+import time, sys
+import cPickle as pickle
 
 ###########################################################
 # StockSim class
@@ -12,10 +12,11 @@ class StockSim:
     #tax_rate = 1.005
     tax_rate = 1.005
 
-    def __init__(self):
+    def __init__(self, transaction_list):
         self.cache = {}
+        self.transaction_list = transaction_list
 
-    def execute(self, money, transaction_list, seconds, number, sell_buy_rate, main_ratio, verbose=True):
+    def execute(self, money, seconds, number, sell_buy_rate, main_ratio, verbose=True):
 
         def tick_after_seconds(time, seconds):
             now = datetime.datetime(2018, 5, 25, time / 10000, (time / 100) % 100, time % 100)
@@ -35,8 +36,11 @@ class StockSim:
         win_count, lose_count = 0, 0
 
         trace = collections.OrderedDict()
-        for k, v in transaction_list.items():
+        for k, v in self.transaction_list.items():
             trace[int(k)] = v
+
+        if max(trace.keys()) <= 130000:
+            return money, win_count, lose_count
 
         for tick, data in trace.items():
 

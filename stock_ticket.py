@@ -140,7 +140,7 @@ def execute(s):
 
     print 'Start test %s' % s
 
-    for date in ship.iterate_date('20180525'):
+    for date in ship.iterate_date('20180525', '20180713'):
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
 
@@ -153,24 +153,41 @@ def execute(s):
 
         win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
 
+        # Try all possible combinations
         for win_standard in win_standards:
-            result = map(str, [s, date] + win_standard)
 
-            lock.acquire()
-            print 'Acquire lock'
-            #output_file.write(' '.join(result) + '\n')
+            money, win_count, lose_count = 1000000, 0, 0
+
+            for other_date in ship.iterate_date('20180525', '20180713'):
+
+                other_info = ship.get_daily_info(other_date, every_transaction=True)
+
+                other_transaction = other_info.data
+
+                if not other_transaction or other_date == date:
+                    continue
+
+                sim = StockSim(other_transaction)
+
+                money, wc, lc = sim.execute(money, *win_standard, verbose=True)
+
+                win_count += wc
+                lose_count += lc
+
+            # Filter the non-reliable statistic
+            if lose_count + win_count < 20:
+                continue
+
+            win_ratio = float(win_count) / float(lose_count+win_count)
+            print win_standard, win_ratio
+
+            result = map(str, [s, date] + win_standard + [win_count, lose_count])
+
             queue.put(result)
-            lock.release()
-            print 'Release lock'
 
-            # Try every possible combination
-            print win_standard
 
-            # sim = StockSim()
-            # money, wc, lc = sim.execute(money, transaction, win_standard[-1][0], win_standard[-1][1], percent[2], percent[3], verbose=True)
-            # win_count += wc
-            # lose_count += lc
-            #print money
+
+
 
 
 def init(l, q):
@@ -183,8 +200,8 @@ def init(l, q):
 if __name__ == '__main__':
 
     stock_list = ['2454', '2439', '2455', '2448', '2377', '3035',
-                  '2456', '2313', '5269', '2383', '1312', '2353', '1707',
-                  '3443', '4906']
+                 '2456', '2313', '5269', '2383', '1312', '2353', '1707',
+                 '3443', '4906']
 
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--update', help='Get today\'s data', action='store_true')
@@ -204,10 +221,7 @@ if __name__ == '__main__':
         lock = Lock()
         queue = Queue()
 
-        pool = Pool(initializer=init, initargs=(lock, queue))
-
-        money = 1000000
-        win_count, lose_count = 0, 0
+        pool = Pool(1, initializer=init, initargs=(lock, queue))
 
         res = [pool.apply_async(execute, (s,)) for s in stock_list]
         results = [r.get() for r in res]
