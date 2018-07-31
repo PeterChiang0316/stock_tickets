@@ -140,7 +140,7 @@ def execute(s):
 
     print 'Start test %s' % s
 
-    for date in ship.iterate_date('20180525', '20180713'):
+    for date in ship.iterate_date('20180525', '20180715'):
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
 
@@ -149,8 +149,6 @@ def execute(s):
         if not transaction:
             continue
 
-        print '[%s] Date: %s' % (s, date)
-
         win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
 
         # Try all possible combinations
@@ -158,7 +156,9 @@ def execute(s):
 
             money, win_count, lose_count = 1000000, 0, 0
 
-            for other_date in ship.iterate_date('20180525', '20180713'):
+            for other_date in ship.iterate_range(date, 6):
+
+                print '[%s] simulating %s ...' % (s, other_date)
 
                 other_info = ship.get_daily_info(other_date, every_transaction=True)
 
@@ -175,13 +175,15 @@ def execute(s):
                 lose_count += lc
 
             # Filter the non-reliable statistic
-            if lose_count + win_count < 20:
-                continue
+            # if lose_count + win_count < 20:
+            #     continue
+            if lose_count+win_count == 0:
+                break
 
             win_ratio = float(win_count) / float(lose_count+win_count)
             print win_standard, win_ratio
 
-            result = map(str, [s, date] + win_standard + [win_count, lose_count])
+            result = map(str, [s, date] + win_standard + [win_count, lose_count, money])
 
             queue.put(result)
 
@@ -209,6 +211,7 @@ if __name__ == '__main__':
 
     if args.update:
         for s in stock_list:
+            print 'updating ', s
             ship = Stock(s)
             ship.update_daily_info()
         exit(0)
@@ -221,15 +224,17 @@ if __name__ == '__main__':
         lock = Lock()
         queue = Queue()
 
-        pool = Pool(1, initializer=init, initargs=(lock, queue))
+        pool = Pool(3, initializer=init, initargs=(lock, queue))
 
         res = [pool.apply_async(execute, (s,)) for s in stock_list]
         results = [r.get() for r in res]
 
         f_result = open('train_data.txt', 'w')
 
+        f_result.write('stock,date,second,number,inout_ratio,main_ratio,win,lose,money\n')
+
         while not queue.empty():
-            f_result.write(' '.join(queue.get()) + '\n')
+            f_result.write(','.join(queue.get()) + '\n')
 
         f_result.close()
 

@@ -38,7 +38,11 @@ class Stock:
             os.mkdir(self.stock_data_folder)
         
         self.cache = {}
-            
+
+        pattern = re.compile('trans_\d\d\d\d\d\d\d\d\.pickle')
+        self.trans_list = sorted(filter(pattern.match, os.listdir(self.stock_data_folder)))
+        self.trans_list = map(lambda v: v[6:14], self.trans_list)
+
     def is_stock_open(self, day):
     
         '''
@@ -60,7 +64,7 @@ class Stock:
     def get_daily_info(self, date, every_transaction=False):
     
         # Check date format
-        assert len(date) == 8, 'Date format error, should be in yyyymmdd format ex: 20171011'
+        assert len(date) == 8, 'Date format error, should be in yyyymmdd format ex: 20171011 but get %s' % date
         assert int(date[:4]) > 1990, 'Year error'
         assert 1 <= int(date[4:6]) <= 12, 'Month error'
         assert 1 <= int(date[6:]) <= 31, 'Day error'
@@ -229,7 +233,12 @@ class Stock:
             yield date_start
             date_start = self.get_next_opening(date_start)
         yield date_end
-        
+
+    def iterate_range(self, date, count):
+        assert date in self.trans_list
+        idx = self.trans_list.index(date)
+        return self.trans_list[idx:idx+count]
+
     def update_daily_info(self, today_date=None):
     
         # Not specified date, use today
@@ -384,7 +393,10 @@ def stock_daily_parser(stock):
         
         if sell == '--':
             sell = buy
-            
+        if buy == '--':
+            buy = sell
+
+        print buy, sell, deal, diff, count
         d[time] = {'buy': float(buy), \
                 'sell': float(sell),\
                 'deal': float(deal),\

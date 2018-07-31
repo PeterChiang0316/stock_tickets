@@ -39,8 +39,10 @@ class StockSim:
         for k, v in self.transaction_list.items():
             trace[int(k)] = v
 
-        if max(trace.keys()) <= 130000:
+        if trace.keys()[-1] <= 130000:
             return money, win_count, lose_count
+
+        start_price = trace.values()[0].deal
 
         for tick, data in trace.items():
 
@@ -58,6 +60,7 @@ class StockSim:
                     lose_count += 1
                 break
 
+
             if is_brought:
                 #print tick, data
                 # Valid the result
@@ -74,6 +77,13 @@ class StockSim:
                     count -= 1
                     lose_count += 1
             else:
+
+                if data.deal < start_price * 0.98:
+                    continue
+
+                if data.deal > start_price * 1.05:
+                    continue
+
                 buy, sell = 0, 0
 
                 # last N seconds
@@ -97,7 +107,7 @@ class StockSim:
 
                 sell_list = sorted(sell_list[:-1], reverse=True)
 
-                if len(sell_list) <= 3:
+                if len(sell_list) <= 3 or (buy + sell) == 0:
                     continue
 
                 if sell >= number and (100 * sell / (buy + sell)) >= sell_buy_rate and money > data.sell * 1000:
