@@ -22,7 +22,7 @@ def magnitude_test(stock):
     return sum(i > 0.02 for i in magnitude / float(len(magnitude)))
 
 
-def stock_win_point_test(transaction, minutes=5, verbose=True):
+def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
     def tick_after_minutes(t, m):
         now = datetime.datetime(2018, 5, 25, t / 10000, (t / 100) % 100, t % 100)
         after = now + datetime.timedelta(minutes=m)
@@ -115,7 +115,7 @@ def stock_win_point_test(transaction, minutes=5, verbose=True):
             # print str(i), acc
 
         if verbose:
-            print '-------- Report -----------'
+            print '-------- Report %s %s -----------' % (s, d)
             print 'Start point: %d' % tick
             print 'Win point: %d' % win_tick
             print 'Duration: %d s' % time_diff(tick, win_tick)
@@ -140,6 +140,8 @@ def execute(s):
 
     print 'Start test %s' % s
 
+    win_standard_dict = {}
+
     for date in ship.iterate_date('20180525', '20180715'):
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
@@ -149,43 +151,47 @@ def execute(s):
         if not transaction:
             continue
 
-        win_standards = stock_win_point_test(transaction, minutes=5, verbose=True)
+        win_standards = stock_win_point_test(s, date, transaction, minutes=5, verbose=True)
 
-        # Try all possible combinations
-        for win_standard in win_standards:
+        win_standard_dict[date] = win_standards
 
-            money, win_count, lose_count = 1000000, 0, 0
+    for date in ship.iterate_date('20180525', '20180715'):
 
-            for other_date in ship.iterate_range(date, 6):
+        money, win_count, lose_count = 1000000, 0, 0
 
-                print '[%s] simulating %s ...' % (s, other_date)
+        if date not in win_standard_dict or not win_standard_dict[date]: continue
 
-                other_info = ship.get_daily_info(other_date, every_transaction=True)
+        #for other_date in ship.iterate_range(date, 5):
+        for other_date in ship.iterate_date('20180525', '20180715'):
 
-                other_transaction = other_info.data
+            print '[%s] simulating %s ...' % (s, other_date)
 
-                if not other_transaction or other_date == date:
-                    continue
+            other_info = ship.get_daily_info(other_date, every_transaction=True)
 
-                sim = StockSim(other_transaction)
+            other_transaction = other_info.data
 
-                money, wc, lc = sim.execute(money, *win_standard, verbose=True)
+            if not other_transaction or other_date == date:
+                continue
+
+            sim = StockSim(other_transaction)
+            for win_standard in win_standard_dict[date]:
+                money, wc, lc = sim.execute(money, [win_standard], verbose=True)
 
                 win_count += wc
                 lose_count += lc
 
-            # Filter the non-reliable statistic
-            # if lose_count + win_count < 20:
-            #     continue
-            if lose_count+win_count == 0:
-                break
+        # Filter the non-reliable statistic
+        # if lose_count + win_count < 20:
+        #     continue
+        if lose_count+win_count == 0:
+            break
 
-            win_ratio = float(win_count) / float(lose_count+win_count)
-            print win_standard, win_ratio
+        win_ratio = float(win_count) / float(lose_count+win_count)
+        print win_ratio
 
-            result = map(str, [s, date] + win_standard + [win_count, lose_count, money])
+        result = map(str, [s, date] + [win_standard] + [win_count, lose_count, money])
 
-            queue.put(result)
+        queue.put(result)
 
 
 
@@ -213,7 +219,7 @@ if __name__ == '__main__':
         for s in stock_list:
             print 'updating ', s
             ship = Stock(s)
-            ship.update_daily_info()
+            ship.update_daily_info('20180503')
         exit(0)
 
     # Real simulation
@@ -224,14 +230,18 @@ if __name__ == '__main__':
         lock = Lock()
         queue = Queue()
 
-        pool = Pool(3, initializer=init, initargs=(lock, queue))
+        pool = Pool(1, initializer=init, initargs=(lock, queue))
 
         res = [pool.apply_async(execute, (s,)) for s in stock_list]
         results = [r.get() for r in res]
 
-        f_result = open('train_data.txt', 'w')
+        #results = []
+        #for s# in stock_list:
+        #    execute(s)
 
-        f_result.write('stock,date,second,number,inout_ratio,main_ratio,win,lose,money\n')
+        f_result = open('train_data.csv', 'w')
+
+        f_result.write('stock,date,num_standard,win,lose,money\n')
 
         while not queue.empty():
             f_result.write(','.join(queue.get()) + '\n')
