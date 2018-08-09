@@ -157,41 +157,42 @@ def execute(s):
 
     for date in ship.iterate_date('20180525', '20180715'):
 
-        money, win_count, lose_count = 1000000, 0, 0
-
         if date not in win_standard_dict or not win_standard_dict[date]: continue
 
         #for other_date in ship.iterate_range(date, 5):
-        for other_date in ship.iterate_date('20180525', '20180715'):
+        for win_standard in win_standard_dict[date]:
 
-            print '[%s] simulating %s ...' % (s, other_date)
+            money, win_count, lose_count, tie_count, escape_count = 1000000, 0, 0, 0, 0
 
-            other_info = ship.get_daily_info(other_date, every_transaction=True)
+            for other_date in ship.iterate_date('20180525', '20180715'):
 
-            other_transaction = other_info.data
+                print '[%s] simulating %s ...' % (s, other_date)
 
-            if not other_transaction or other_date == date:
-                continue
+                other_info = ship.get_daily_info(other_date, every_transaction=True)
 
-            sim = StockSim(other_transaction)
-            for win_standard in win_standard_dict[date]:
-                money, wc, lc = sim.execute(money, [win_standard], verbose=True)
+                other_transaction = other_info.data
+
+                if not other_transaction or other_date == date:
+                    continue
+
+                sim = StockSim(other_transaction)
+
+                money, wc, lc, tc, ec = sim.execute(money, [win_standard], verbose=True)
 
                 win_count += wc
                 lose_count += lc
+                tie_count += tc
+                escape_count += ec
 
-        # Filter the non-reliable statistic
-        # if lose_count + win_count < 20:
-        #     continue
-        if lose_count+win_count == 0:
-            break
+            # Filter the non-reliable statistic
+            # if lose_count + win_count < 20:
+            #     continue
+            if lose_count+win_count+tie_count+escape_count == 0:
+                break
 
-        win_ratio = float(win_count) / float(lose_count+win_count)
-        print win_ratio
+            result = map(str, [s, date] + win_standard + [win_count, lose_count, tie_count, escape_count, money])
 
-        result = map(str, [s, date] + [win_standard] + [win_count, lose_count, money])
-
-        queue.put(result)
+            queue.put(result)
 
 
 
@@ -219,7 +220,7 @@ if __name__ == '__main__':
         for s in stock_list:
             print 'updating ', s
             ship = Stock(s)
-            ship.update_daily_info('20180503')
+            ship.update_daily_info()
         exit(0)
 
     # Real simulation
@@ -230,18 +231,15 @@ if __name__ == '__main__':
         lock = Lock()
         queue = Queue()
 
-        pool = Pool(1, initializer=init, initargs=(lock, queue))
+        pool = Pool(4, initializer=init, initargs=(lock, queue))
 
         res = [pool.apply_async(execute, (s,)) for s in stock_list]
         results = [r.get() for r in res]
 
-        #results = []
-        #for s# in stock_list:
-        #    execute(s)
-
         f_result = open('train_data.csv', 'w')
 
-        f_result.write('stock,date,num_standard,win,lose,money\n')
+        #f_result.write('stock,date,num_standard,win,lose,money\n')
+        f_result.write('stock,date,second,number,inout_ratio,main_ratio,win,lose,tie,escape,money\n')
 
         while not queue.empty():
             f_result.write(','.join(queue.get()) + '\n')

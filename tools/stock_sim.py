@@ -28,14 +28,15 @@ class StockSim:
                 print s
 
         is_brought, count = False, 0
-        win_count, lose_count = 0, 0
+        win_count, lose_count, tie_count, escape_count = 0, 0, 0, 0
 
         trace = collections.OrderedDict()
         for k, v in self.transaction_list.items():
             trace[int(k)] = v
 
+        # There might be some data lost in simulation data, just skip it
         if trace.keys()[-1] <= 130000:
-            return money, win_count, lose_count
+            return money, win_count, lose_count, tie_count, escape_count
 
         start_price = trace.values()[0].deal
 
@@ -54,7 +55,7 @@ class StockSim:
                     dbg_print('execute remain')
                     money += data.buy * 1000
                     count -= 1
-                    lose_count += 1
+                    tie_count += 1
                 break
 
 
@@ -73,9 +74,15 @@ class StockSim:
                     is_brought = False
                     count -= 1
                     lose_count += 1
+                elif tick >= escape_tick and data.buy >= escape_price:
+                    dbg_print('escape')
+                    money += data.buy * 1000
+                    is_brought = False
+                    count -= 1
+                    escape_count += 1
             else:
 
-                if data.deal < start_price * 0.98:
+                if data.deal < start_price * 0.95:
                     continue
 
                 if data.deal > start_price * 1.05:
@@ -117,14 +124,16 @@ class StockSim:
                 if win_standards and pass_win_standards:
 
                     money -= (data.sell * 1000) * self.tax_rate
-                    is_brought = True
-                    win_price, lose_price = data.sell * 1.01, data.sell * 0.99
+                    # If not win in ten minutes, just escape
+                    is_brought, escape_tick = True, tick_after_seconds(tick, 300)
+                    win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.99, data.sell * self.tax_rate
                     count += 1
                     print '[PASS] ', buy, sell, tick, interval_start, money, data.sell, win_price, lose_price, (100 * sell / (buy + sell))
 
         dbg_print('Final money %.2f' % money)
         assert count == 0, 'count %d' % count
-        return money, win_count, lose_count
+        print money, win_count, lose_count, tie_count, escape_count
+        return money, win_count, lose_count, tie_count, escape_count
 
 
 ###########################################################
