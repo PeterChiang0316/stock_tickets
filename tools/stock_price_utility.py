@@ -90,7 +90,7 @@ class Stock:
             d = pickle_load(filename)
             if date in d:
                 return d[date]
-            elif max(map(int, d.keys())) < date:
+            elif int(d.keys()[-1]) < date:
                 pass
             else:
                 assert date in d, 'The stock %s is not open at %s' % (self.stock, date)

@@ -1,5 +1,6 @@
 .idea
 *.pyc
 *.pickle
+build/
 !trans_*
 

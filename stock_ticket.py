@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import time, datetime, collections
+import time, datetime, collections, os
 from tools.stock_price_utility import Stock
 from tools.stock_sim import StockSim
 from multiprocessing import Pool, Lock, Queue
@@ -155,6 +155,10 @@ def execute(s):
 
         win_standard_dict[date] = win_standards
 
+    fn = os.path.join('build', s + '.csv')
+    fp = open(fn, 'w')
+    fp.write('stock,date,second,number,inout_ratio,main_ratio,buy_tick,result_tick,interval,reason,buy_price,sell_price,diff\n')
+
     for date in ship.iterate_date('20180525', '20180715'):
 
         if date not in win_standard_dict or not win_standard_dict[date]: continue
@@ -173,11 +177,12 @@ def execute(s):
                 other_transaction = other_info.data
 
                 if not other_transaction or other_date == date:
+                    print '[SYSTEM]', other_date, date
                     continue
 
-                sim = StockSim(other_transaction)
+                sim = StockSim(s, other_date, other_transaction, fp, ship.get_stock_finance(other_date))
 
-                money, wc, lc, tc, ec = sim.execute(money, [win_standard], verbose=True)
+                money, wc, lc, tc, ec = sim.execute(money, win_standard, verbose=True)
 
                 win_count += wc
                 lose_count += lc
@@ -193,6 +198,8 @@ def execute(s):
             result = map(str, [s, date] + win_standard + [win_count, lose_count, tie_count, escape_count, money])
 
             queue.put(result)
+
+    fp.close()
 
 
 
@@ -216,6 +223,7 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--update', help='Get today\'s data', action='store_true')
+    parser.add_argument('-pll', help='Use multiprocessing', action='store_true')
     args = parser.parse_args()
 
     if args.update:
@@ -228,18 +236,23 @@ if __name__ == '__main__':
     # Real simulation
     else:
 
+        if not os.path.exists('build'): os.mkdir('build')
+
         start_time = time.time()
 
         lock = Lock()
         queue = Queue()
 
-        #pool = Pool(4, initializer=init, initargs=(lock, queue))
-        #
-        #res = [pool.apply_async(execute, (s,)) for s in stock_list]
-        #results = [r.get() for r in res]
-        
-        for s in stock_list:
-            execute(s)
+        if args.pll:
+
+            pool = Pool(initializer=init, initargs=(lock, queue))
+            res = [pool.apply_async(execute, (s,)) for s in stock_list]
+            results = [r.get() for r in res]
+
+        else:
+
+            for s in stock_list:
+                execute(s)
         
         f_result = open('train_data.csv', 'w')
 
