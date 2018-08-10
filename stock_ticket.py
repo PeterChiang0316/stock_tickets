@@ -211,7 +211,9 @@ if __name__ == '__main__':
     stock_list = ['2454', '2439', '2455', '2448', '2377', '3035',
                  '2456', '2313', '5269', '2383', '1312', '2353', '1707',
                  '3443', '4906']
-
+    stock_list += ['2915', '5264', '2311', '2105', '3673', '2542', '3044', '2610', '6116', '1319', '2059', '2356']
+    stock_list += ['3017', '2485', '1536', '3376', '2603', '6285', '3665', '1476']
+    
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--update', help='Get today\'s data', action='store_true')
     args = parser.parse_args()
@@ -231,11 +233,14 @@ if __name__ == '__main__':
         lock = Lock()
         queue = Queue()
 
-        pool = Pool(4, initializer=init, initargs=(lock, queue))
-
-        res = [pool.apply_async(execute, (s,)) for s in stock_list]
-        results = [r.get() for r in res]
-
+        #pool = Pool(4, initializer=init, initargs=(lock, queue))
+        #
+        #res = [pool.apply_async(execute, (s,)) for s in stock_list]
+        #results = [r.get() for r in res]
+        
+        for s in stock_list:
+            execute(s)
+        
         f_result = open('train_data.csv', 'w')
 
         #f_result.write('stock,date,num_standard,win,lose,money\n')

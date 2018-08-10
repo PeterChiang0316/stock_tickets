@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import time, sys
 import StringIO
 import cPickle as pickle
+import bisect
 ###########################################################
 # Global class
 ###########################################################
@@ -49,17 +50,7 @@ class Stock:
         :param day: stock date
         :return: True if stock opens in specified day
         '''
-        filename = os.path.join(self.stock_data_folder, 'finance.pickle')
-        if 'date_list_cache' in self.cache and int(day) <= min(map(int, self.cache['date_list_cache'].keys())):
-            date_list = self.cache['date_list_cache']
-        else:
-            self.get_stock_finance(day)
-            date_list = pickle_load(filename)
-            self.cache['date_list_cache'] = date_list
-            
-        assert min(map(int, date_list.keys())) <= int(day), 'Date too old, can not obtain'
-        
-        return day in date_list
+        return day in self.trans_list
     
     def get_daily_info(self, date, every_transaction=False):
     
@@ -68,69 +59,13 @@ class Stock:
         assert int(date[:4]) > 1990, 'Year error'
         assert 1 <= int(date[4:6]) <= 12, 'Month error'
         assert 1 <= int(date[6:]) <= 31, 'Day error'
-        assert self.is_stock_open(date), 'Stock date error % s' % date
+        #assert self.is_stock_open(date), 'Stock date error % s' % date
         
         folder = os.path.join('data', self.stock)
         
-        
-
-        filename = os.path.join('data', self.stock, date+'.pickle')
-    
-        if os.path.exists(filename):
-            json = pickle_load(filename)
-            
-        else:
-            # Get CK for stock price
-            ck, session = get_stock_ck()
-            cookies = session.cookies.get_dict()
-        
-            h = {
-                'Accept': 'application/json, text/javascript, */*; q=0.01',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-CN;q=0.2',
-                'Connection': 'keep-alive',
-                'Cookie': 'AspSession=' + cookies['AspSession'] + ';',
-                'Host': 'www.cmoney.tw',
-                'Referer': 'https://www.cmoney.tw/notice/chart/stockchart.aspx?action=r&id=1101&date=20171011',
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
-                'X-Requested-With': 'XMLHttpRequest'}
-        
-            data = {
-                'action': 'r',
-                'id': self.stock,
-                'date': date,
-                'ck': ck,
-            }
-        
-            url = 'http://www.cmoney.tw/notice/chart/stock-chart-service.ashx'
-            res = session.get(url, headers=h, params=data)
-        
-            assert res.status_code == 200
-        
-            # store to cache
-            json = res.json()
-            pickle_save(filename, json)
-            
-        def JSONParser(d, key):
-            dots = d[key]
-            l = collections.OrderedDict()
-            for dot in dots:
-                # time, deal_price, deal_num, high_price, low_price
-                #d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%Y\t%m\t%d\t%H\t%M\t')
-                d = datetime.datetime.utcfromtimestamp(float(dot[0] / 1000)).strftime('%H%M\t')
-                
-                l[d] = DailyInfo({
-                    'deal_price': float(dot[1]),
-                    'count'     : float(dot[2]),
-                    'high_price': float(dot[3]),
-                    'low_price' : float(dot[4])
-                })
-        
-            return l
-        
         def transaction_info_parser():
         
-            # If we need daily transction info, search if the data is availiable
+            # If we need daily transaction info, search if the data is available
             filename = os.path.join('data', self.stock, 'trans_'+date+'.pickle')
 
             if not os.path.exists(filename):
@@ -138,37 +73,13 @@ class Stock:
 
             d = pickle_load(filename)
             return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())
-
-        def json2dic(json):
-            return DetailInfo({'open_price': json['RealInfo']['OpenPrice'], 
-                    'last_close_price': json['RealInfo']['PrvSalePrice'], 
-                    'daily_magnitude': json['RealInfo']['MagnitudeOfPrice'],
-                    'daily_amount': json['RealInfo']['Amount'],
-                    'lowest_price': json['RealInfo']['LowPrice'],
-                    'highest_price': json['RealInfo']['HighPrice'],
-                    'data': JSONParser(json, 'DataPrice') if not every_transaction else transaction_info_parser()
-                    })
-        
-        return json2dic(json)
+            
+        return DetailInfo({'data': transaction_info_parser()})
     
-    
-    
-    def get_next_opening(self, date, diff=1):
-        year, month, day = int(date[:4]), int(date[4:6]), int(date[6:])
-    
-        next_day = datetime.date(year, month, day) + datetime.timedelta(days=diff)
-        year, month, day = next_day.year, next_day.month, next_day.day
-        #print year, month, day
-    
-        while not self.is_stock_open("%d%0.2d%0.2d" % (year, month, day)):
-            #print 'in next day loop'
-            current_date = datetime.date(year, month, day)
-            yesterday_date = datetime.datetime.today().date() - datetime.timedelta(days=1)
-            #assert current_date < yesterday_date, 'Can not use future days'
-            next_day = datetime.date(year, month, day) + datetime.timedelta(days=diff)
-            year, month, day = next_day.year, next_day.month, next_day.day
-            #print year, month, day
-        return "%d%0.2d%0.2d" % (year, month, day)
+    def get_next_opening(self, date):
+        pos = bisect.bisect_right(self.trans_list, date)
+        return self.trans_list[pos] if pos < len(self.trans_list) else None
+            
     
     def get_stock_finance(self, date):
         
@@ -224,15 +135,14 @@ class Stock:
         return d[date] if date in d else None
     
     def iterate_date(self, date_start, date_end=datetime.datetime.now().strftime('%Y%m%d')):
-
-        date_start = date_start if self.is_stock_open(date_start) else self.get_next_opening(date_start)
-        date_end = date_end if self.is_stock_open(date_end) else self.get_next_opening(date_end, diff=-1)
-        assert date_start < date_end, 'should not iterate from %s through future %s' % (date_start, date_end)
-
-        while date_start < date_end:
-            yield date_start
-            date_start = self.get_next_opening(date_start)
-        yield date_end
+        
+        if date_end <= date_start:
+            return []
+        else:
+            left = bisect.bisect_left(self.trans_list, date_start)
+            right = bisect.bisect_right(self.trans_list, date_end)
+            return self.trans_list[left:right]
+        
 
     def iterate_range(self, date, count):
         assert date in self.trans_list
