@@ -81,13 +81,17 @@ class Stock:
         return self.trans_list[pos] if pos < len(self.trans_list) else None
             
     
-    def get_stock_finance(self, date):
+    def get_stock_finance(self, date=None):
         
         filename = os.path.join('data', self.stock, 'finance.pickle')
 
         if os.path.exists(filename):
 
             d = pickle_load(filename)
+
+            if date == None:
+                return d
+
             if date in d:
                 return d[date]
             elif int(d.keys()[-1]) < date:
@@ -317,12 +321,41 @@ def stock_daily_parser(stock):
 
 
 
+def update_TWA_finance():
+    ck, session = get_stock_ck()
+    h = {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-CN;q=0.2',
+        'Connection': 'keep-alive',
+        'Cookie': 'AspSession='+session.cookies['AspSession']+'; __asc=f192f05015e1a2dd01ff253ba0a; __auc=f192f05015e1a2dd01ff253ba0a; _gat_real=1; _gat_UA-30929682-4=1; _ga=GA1.2.1793962014.1465548991; _gid=GA1.2.2115739754.1503677764; _gat_UA-30929682-1=1',
+        'Host': 'www.cmoney.tw',
+        'Referer': 'https://www.cmoney.tw/notice/chart/stockchart.aspx?action=d&id=TWA00&scaleSize=1',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest'}
 
+    data = {
+        'action': 'd',
+        'count': '1000',
+        'id': 'TWA00',
+        'ck': ck,
+        '_': '1533974045257'
+    }
+    res = session.get('https://www.cmoney.tw/notice/chart/stock-chart-service.ashx', headers=h, params=data)
+    d = collections.OrderedDict()
+    for element in res.json()['DataLine']:
+        date, open_price, high_price, low_price, close_price, tmp, diff, rate, tmp2, money = element
+        date_string = datetime.datetime.fromtimestamp(date/1000.0).strftime('%Y%m%d')
+        d[date_string] = {
+            'open_price': open_price,
+            'high_price': high_price,
+            'close_price': close_price,
+            'diff': diff,
+            'rate': rate,
+            'money': money * 1000
+        }
+    pickle_save('data/TWA.pickle', d)
 
-
-    
-
-    
 ###########################################################
 # Public Function
 ###########################################################

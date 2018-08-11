@@ -110,6 +110,10 @@ class StockSim:
                 if data.deal < last_day_close_price * 0.95 or data.deal > last_day_close_price * 1.05:
                     continue
 
+                # Do not buy after 12:30 to have time to run
+                if tick > 123000:
+                    break
+
                 buy, sell = 0, 0
 
                 seconds, number, sell_buy_rate, main_ratio = win_standard
@@ -132,7 +136,7 @@ class StockSim:
                     continue
 
                 if sell >= number and (sell / (buy + sell)) >= sell_buy_rate \
-                        and money > data.sell * 1000 and sum(sell_list[:3]) / sum(sell_list) >= main_ratio:
+                        and money > data.sell * 1000: #and sum(sell_list[:3]) / sum(sell_list) >= main_ratio:
                     pass
                 else:
                     continue
@@ -140,7 +144,7 @@ class StockSim:
                 money -= (data.sell * 1000) * self.tax_rate
                 # If not win in 5 minutes, just escape
                 is_brought, escape_tick = True, tick_after_seconds(tick, 300)
-                win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.99, data.sell * self.tax_rate
+                win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.97, data.sell * self.tax_rate
                 buy_tick, buy_price = tick, data.sell
                 count += 1
                 print '[PASS] ', buy, sell, tick, interval_start, money, data.sell, win_price, lose_price, (100 * sell / (buy + sell))

@@ -3,7 +3,7 @@ import time, datetime, collections, os
 from tools.stock_price_utility import Stock
 from tools.stock_sim import StockSim
 from multiprocessing import Pool, Lock, Queue
-import argparse
+import argparse, bisect, tools
 
 
 def magnitude_test(stock):
@@ -136,13 +136,29 @@ def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
 
 
 def execute(s):
+    def ma5comparema20(d, TWA):
+        date_list = TWA.keys()
+        right = bisect.bisect_left(date_list, d)
+        ma20 = sum(map(lambda k: k['close_price'], TWA.values()[right - 20:right])) / 20
+        ma5 = sum(map(lambda k: k['close_price'], TWA.values()[right - 5:right])) / 5
+        return ma5 >= ma20
+
     ship = Stock(s)
 
     print 'Start test %s' % s
 
     win_standard_dict = {}
+    if not os.path.exists('data/TWA.pickle'):
+        tools.stock_price_utility.update_TWA_finance()
+        
+    TWA = tools.stock_price_utility.pickle_load('data/TWA.pickle')
 
     for date in ship.iterate_date('20180525', '20180715'):
+
+        # Filter the date that not safe
+        # reference: https://xstrader.net
+        if not ma5comparema20(date, TWA): continue
+
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
 
