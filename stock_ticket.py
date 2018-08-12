@@ -150,14 +150,10 @@ def execute(s):
     win_standard_dict = {}
     if not os.path.exists('data/TWA.pickle'):
         tools.stock_price_utility.update_TWA_finance()
-        
+
     TWA = tools.stock_price_utility.pickle_load('data/TWA.pickle')
 
     for date in ship.iterate_date('20180525', '20180715'):
-
-        # Filter the date that not safe
-        # reference: https://xstrader.net
-        if not ma5comparema20(date, TWA): continue
 
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
@@ -173,7 +169,9 @@ def execute(s):
 
     fn = os.path.join('build', s + '.csv')
     fp = open(fn, 'w')
-    fp.write('stock,date,second,number,inout_ratio,main_ratio,buy_tick,result_tick,interval,reason,buy_price,sell_price,diff\n')
+    header = ['stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick', \
+              'result_tick', 'interval', 'reason', 'buy_price', 'sell_price', 'K9', 'D9', 'DIF_MACD','diff']
+    fp.write(','.join(header) + '\n')
 
     for date in ship.iterate_date('20180525', '20180715'):
 
@@ -186,6 +184,10 @@ def execute(s):
 
             for other_date in ship.iterate_date('20180525', '20180715'):
 
+                # Filter the date that not safe
+                # reference: https://xstrader.net
+                if not ma5comparema20(other_date, TWA): continue
+
                 print '[%s] simulating %s ...' % (s, other_date)
 
                 other_info = ship.get_daily_info(other_date, every_transaction=True)
@@ -196,7 +198,21 @@ def execute(s):
                     print '[SYSTEM]', other_date, date
                     continue
 
-                sim = StockSim(s, other_date, other_transaction, fp, ship.get_stock_finance(other_date))
+                stock_finance = ship.get_stock_finance()
+                left = bisect.bisect_left(stock_finance.keys(), other_date)
+                last_finance = stock_finance.values()[left-1]
+
+                # reference: http://www.cmoney.tw/learn/course/technicalanalysisfast/topic/1846
+                if last_finance['K9'] >= 80 or last_finance['D9'] >= 80:
+                    print '[SYSTEM] K/D value exceed 80'
+                    continue
+
+                if abs(last_finance['DIF_MACD']) < 0.5:
+                    print '[SYSTEM] DIF_MACD too small'
+                    continue
+
+                sim = StockSim(s, other_date, other_transaction, fp, \
+                               stock_finance[other_date], last_finance)
 
                 money, wc, lc, tc, ec = sim.execute(money, win_standard, verbose=True)
 

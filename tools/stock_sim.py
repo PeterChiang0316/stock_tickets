@@ -12,13 +12,14 @@ class StockSim:
     #tax_rate = 1.005
     tax_rate = 1.005
 
-    def __init__(self, stock, date, transaction_list, output_file, finance):
+    def __init__(self, stock, date, transaction_list, output_file, finance, last_finance):
         self.stock = stock
         self.cache = {}
         self.transaction_list = transaction_list
         self.output_file = output_file
         self.date = date
         self.finance = finance
+        self.last_finance = last_finance
 
     def add_record(self, win_standard, buy_tick, result_tick, buy_price, sell_price, diff, reason):
 
@@ -37,6 +38,9 @@ class StockSim:
         self.output_file.write(reason + ',')
         self.output_file.write(str(buy_price)+ ',')
         self.output_file.write(str(sell_price)+ ',')
+        self.output_file.write(str(self.last_finance['K9']) + ',')
+        self.output_file.write(str(self.last_finance['D9']) + ',')
+        self.output_file.write(str(self.last_finance['DIF_MACD']) + ',')
         self.output_file.write(str(diff) + '\n')
 
     def execute(self, money, win_standard, verbose=True):
@@ -136,15 +140,15 @@ class StockSim:
                     continue
 
                 if sell >= number and (sell / (buy + sell)) >= sell_buy_rate \
-                        and money > data.sell * 1000: #and sum(sell_list[:3]) / sum(sell_list) >= main_ratio:
+                        and money > data.sell * 1000 and sum(sell_list[:3]) / sum(sell_list) >= main_ratio:
                     pass
                 else:
                     continue
 
                 money -= (data.sell * 1000) * self.tax_rate
                 # If not win in 5 minutes, just escape
-                is_brought, escape_tick = True, tick_after_seconds(tick, 300)
-                win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.97, data.sell * self.tax_rate
+                is_brought, escape_tick = True, tick_after_seconds(tick, 600)
+                win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, data.sell * self.tax_rate
                 buy_tick, buy_price = tick, data.sell
                 count += 1
                 print '[PASS] ', buy, sell, tick, interval_start, money, data.sell, win_price, lose_price, (100 * sell / (buy + sell))
