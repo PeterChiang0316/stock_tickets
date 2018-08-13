@@ -1,7 +1,5 @@
 import time
 from tools.stock_price_utility import Stock
-from sklearn import svm
-import random
 
 def demo():
     start_time = time.time()
