@@ -287,8 +287,6 @@ if __name__ == '__main__':
                 execute(s)
         
         f_result = open('train_data.csv', 'w')
-
-        #f_result.write('stock,date,num_standard,win,lose,money\n')
         f_result.write('stock,date,second,number,inout_ratio,main_ratio,win,lose,tie,escape,money\n')
 
         while not queue.empty():
@@ -300,5 +298,3 @@ if __name__ == '__main__':
 
         print 'Total time: %.2f' % (end_time - start_time)
 
-        # print win_count, lose_count
-    # print win_count, lose_count, money
