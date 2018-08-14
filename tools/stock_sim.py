@@ -11,6 +11,8 @@ class StockSim:
 
     #tax_rate = 1.005
     tax_rate = 1.005
+    WIN_STANDARD = 1
+    LOSE_STANDARD = 2
 
     def __init__(self, stock, date, transaction_list, output_file, finance, last_finance):
         self.stock = stock
@@ -54,6 +56,50 @@ class StockSim:
             if verbose:
                 print s
 
+        def standard_test(current_tick, transaction, standard, standard_type):
+
+            buy, sell = 0, 0
+            assert standard_type == self.WIN_STANDARD or standard_type == self.LOSE_STANDARD
+
+            seconds, number, sell_buy_rate, main_ratio = win_standard
+
+            interval_start = tick_after_seconds(current_tick, -1 * seconds)
+
+            interval_list = []
+
+            for k, v in transaction.items():
+                if interval_start <= k <= current_tick:
+                    if standard_type == self.WIN_STANDARD:
+                        # For win_standard
+                        if v.deal >= v.sell:
+                            sell += v.count
+                            interval_list.append(v.count)
+                        else:
+                            buy += v.count
+                    else:
+                        # For lose_standard
+                        if v.deal <= v.buy:
+                            buy += v.count
+                            interval_list.append(v.count)
+                        else:
+                            sell += v.count
+
+            interval_list = sorted(interval_list[:-1], reverse=True)
+
+            if len(interval_list) <= 3 or (buy + sell) == 0:
+                return False
+
+            if sum(interval_list[:3]) / sum(interval_list) >= main_ratio:
+                if standard_type == self.WIN_STANDARD:
+                    if sell >= number and (sell / (buy + sell)) >= sell_buy_rate :
+                        return True
+                else:
+                    if buy >= number and (buy / (buy + sell)) >= sell_buy_rate:
+                        return True
+            else:
+                return False
+
+        # Simulation result flags and counter
         is_brought, count = False, 0
         win_count, lose_count, tie_count, escape_count = 0, 0, 0, 0
 
@@ -81,33 +127,63 @@ class StockSim:
                     money += data.buy * 1000
                     count -= 1
                     tie_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - escape_price) * 1000, 'EXPIRE')
+                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'EXPIRE')
                 break
 
             if is_brought:
 
                 # Valid the result
+                win_standard_valid = standard_test(tick, trace, win_standard, self.WIN_STANDARD)
+                lose_standard_valid = standard_test(tick, trace, win_standard, self.LOSE_STANDARD)
+
                 if data.buy >= win_price:
-                    dbg_print('win')
-                    money += data.buy * 1000
-                    is_brought = False
-                    count -= 1
-                    win_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - escape_price) * 1000, 'WIN')
+                    # When reaching the win_price, check if it still match win_standard
+                    # if TRUE: Update the win_price for saving the processing fee
+                    if win_standard_valid and win_price < cost_price * 1.03:
+                        dbg_print('win and update the target again')
+                        escape_tick = tick_after_seconds(tick, 600)
+                        win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, data.sell * self.tax_rate
+                    else:
+                        dbg_print('win')
+                        money += data.buy * 1000
+                        is_brought = False
+                        count -= 1
+                        win_count += 1
+                        self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'WIN')
+
                 elif data.buy <= lose_price:
                     dbg_print('lose')
                     money += data.buy * 1000
                     is_brought = False
                     count -= 1
                     lose_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - escape_price) * 1000, 'LOSE')
-                elif tick >= escape_tick and data.buy >= escape_price:
-                    dbg_print('escape')
-                    money += data.buy * 1000
-                    is_brought = False
-                    count -= 1
-                    escape_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - escape_price) * 1000, 'ESCAPE')
+                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE')
+
+                elif tick >= escape_tick :
+
+                    if win_standard_valid:
+                        pass
+
+                    elif (lose_standard_valid and data.buy < cost_price * 0.99) or data.buy >= escape_price:
+                        dbg_print('dangerous')
+                        money += data.buy * 1000
+                        is_brought = False
+                        count -= 1
+                        if lose_standard_valid and data.buy < cost_price * 0.99:
+                            self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
+                        else:
+                            self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')
+
+                        escape_count += 1
+                else:
+                    if lose_standard_valid and data.buy < cost_price * 0.99:
+                        # Although nothing happened, still looking for lose standard for early warning
+                        dbg_print('dangerous')
+                        money += data.buy * 1000
+                        is_brought = False
+                        count -= 1
+                        self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
+                        escape_count += 1
             else:
 
                 # Bypass the edge case
@@ -118,40 +194,20 @@ class StockSim:
                 if tick > 123000:
                     break
 
-                buy, sell = 0, 0
+                win_standard_valid = standard_test(tick, trace, win_standard, self.WIN_STANDARD)
+                lose_standard_valid = standard_test(tick, trace, win_standard, self.LOSE_STANDARD)
 
-                seconds, number, sell_buy_rate, main_ratio = win_standard
+                if win_standard_valid and not lose_standard_valid:
 
-                interval_start = tick_after_seconds(tick, -1 * seconds)
+                    cost_price = data.sell * self.tax_rate
+                    money -= (cost_price * 1000)
+                    is_brought = True
+                    escape_tick = tick_after_seconds(tick, 600)
+                    win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, cost_price
+                    buy_tick, buy_price = tick, data.sell
 
-                sell_list = []
-
-                for k, v in trace.items():
-                    if interval_start <= k <= tick:
-                        if v.deal >= v.sell:
-                            sell += v.count
-                            sell_list.append(v.count)
-                        else:
-                            buy += v.count
-
-                sell_list = sorted(sell_list[:-1], reverse=True)
-
-                if len(sell_list) <= 3 or (buy + sell) == 0:
-                    continue
-
-                if sell >= number and (sell / (buy + sell)) >= sell_buy_rate \
-                        and money > data.sell * 1000 and sum(sell_list[:3]) / sum(sell_list) >= main_ratio:
-                    pass
-                else:
-                    continue
-
-                money -= (data.sell * 1000) * self.tax_rate
-                # If not win in 5 minutes, just escape
-                is_brought, escape_tick = True, tick_after_seconds(tick, 600)
-                win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, data.sell * self.tax_rate
-                buy_tick, buy_price = tick, data.sell
-                count += 1
-                print '[PASS] ', buy, sell, tick, interval_start, money, data.sell, win_price, lose_price, (100 * sell / (buy + sell))
+                    count += 1
+                    print '[PASS]'
 
         dbg_print('Final money %.2f' % money)
         assert count == 0, 'count %d' % count
