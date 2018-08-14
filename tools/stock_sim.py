@@ -169,21 +169,22 @@ class StockSim:
                         money += data.buy * 1000
                         is_brought = False
                         count -= 1
-                        if lose_standard_valid and data.buy < cost_price * 0.99:
+                        if lose_standard_valid and data.buy < cost_price * 0.99:#
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
                         else:
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')
 
                         escape_count += 1
                 else:
-                    if lose_standard_valid and data.buy < cost_price * 0.99:
-                        # Although nothing happened, still looking for lose standard for early warning
-                        dbg_print('dangerous')
-                        money += data.buy * 1000
-                        is_brought = False
-                        count -= 1
-                        self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
-                        escape_count += 1
+                    pass
+                    #if lose_standard_valid and data.buy < cost_price * 0.99:
+                    #    # Although nothing happened, still looking for lose standard for early warning
+                    #    dbg_print('dangerous')
+                    #    money += data.buy * 1000
+                    #    is_brought = False
+                    #    count -= 1
+                    #    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
+                    #    escape_count += 1
             else:
 
                 # Bypass the edge case

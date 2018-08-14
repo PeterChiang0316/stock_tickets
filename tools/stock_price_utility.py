@@ -79,8 +79,7 @@ class Stock:
     def get_next_opening(self, date):
         pos = bisect.bisect_right(self.trans_list, date)
         return self.trans_list[pos] if pos < len(self.trans_list) else None
-            
-    
+
     def get_stock_finance(self, date=None):
         
         filename = os.path.join('data', self.stock, 'finance.pickle')
@@ -89,7 +88,7 @@ class Stock:
 
             d = pickle_load(filename)
 
-            if date == None:
+            if date is None:
                 return d
 
             if date in d:
@@ -133,10 +132,8 @@ class Stock:
         
         pickle_save(filename, d)
         self.cache['date_list_cache'] = d
-        
-        assert min(map(int, d.keys())) <= int(date), 'Date too old, can not obtain'
             
-        return d[date] if date in d else None
+        return d
     
     def iterate_date(self, date_start, date_end=datetime.datetime.now().strftime('%Y%m%d')):
         
