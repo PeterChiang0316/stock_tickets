@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import requests, os, re, datetime, collections, math
+import requests, os, re, datetime, collections, math, bisect
 import time, sys
 import cPickle as pickle
 
@@ -66,24 +66,27 @@ class StockSim:
             interval_start = tick_after_seconds(current_tick, -1 * seconds)
 
             interval_list = []
-
-            for k, v in transaction.items():
-                if interval_start <= k <= current_tick:
-                    if standard_type == self.WIN_STANDARD:
-                        # For win_standard
-                        if v.deal >= v.sell:
-                            sell += v.count
-                            interval_list.append(v.count)
-                        else:
-                            buy += v.count
+            
+            keys = transaction.keys()
+            left = bisect.bisect_left(keys, interval_start)
+            right = bisect.bisect_right(keys, current_tick)
+            
+            for v in transaction.values()[left:right]:
+                if standard_type == self.WIN_STANDARD:
+                    # For win_standard
+                    if v.deal >= v.sell:
+                        sell += v.count
+                        interval_list.append(v.count)
                     else:
-                        # For lose_standard
-                        if v.deal <= v.buy:
-                            buy += v.count
-                            interval_list.append(v.count)
-                        else:
-                            sell += v.count
-
+                        buy += v.count
+                else:
+                    # For lose_standard
+                    if v.deal <= v.buy:
+                        buy += v.count
+                        interval_list.append(v.count)
+                    else:
+                        sell += v.count
+            
             interval_list = sorted(interval_list[:-1], reverse=True)
 
             if len(interval_list) <= 3 or (buy + sell) == 0:
@@ -165,11 +168,14 @@ class StockSim:
                         pass
 
                     elif (lose_standard_valid and data.buy < cost_price * 0.99) or data.buy >= escape_price:
+                    
                         dbg_print('dangerous')
                         money += data.buy * 1000
                         is_brought = False
                         count -= 1
-                        if lose_standard_valid and data.buy < cost_price * 0.99:#
+                        
+                        # After lose 1%, looking for the early escape point even though we are losing money
+                        if lose_standard_valid and data.buy < cost_price * 0.99:
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
                         else:
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')

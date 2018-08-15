@@ -66,10 +66,14 @@ def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
         ticks = collections.OrderedDict()
 
         # Gather the tick in the interval
-        for interval_tick, interval_data in trace.items():
-            if tick < interval_tick <= next_tick:
-                ticks[interval_tick] = interval_data
-
+        keys = trace.keys()
+        values = trace.values()
+        left = bisect.bisect_right(keys, tick)
+        right = bisect.bisect_right(keys, next_tick)
+        
+        for interval_tick in range(left, right):
+            ticks[keys[interval_tick]] = values[interval_tick]
+                
         if not ticks:
             continue
 
