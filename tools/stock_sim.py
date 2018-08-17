@@ -62,6 +62,8 @@ class StockSim:
             assert standard_type == self.WIN_STANDARD or standard_type == self.LOSE_STANDARD
 
             seconds, number, sell_buy_rate, main_ratio = win_standard
+            
+            if sell_buy_rate <= 0.5: sell_buy_rate = 0.5
 
             interval_start = tick_after_seconds(current_tick, -1 * seconds)
 
@@ -142,7 +144,7 @@ class StockSim:
                 if data.buy >= win_price:
                     # When reaching the win_price, check if it still match win_standard
                     # if TRUE: Update the win_price for saving the processing fee
-                    if win_standard_valid and win_price < cost_price * 1.03:
+                    if win_standard_valid and win_price < last_day_close_price * 1.05:
                         dbg_print('win and update the target again')
                         escape_tick = tick_after_seconds(tick, 600)
                         win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, data.sell * self.tax_rate
@@ -167,7 +169,7 @@ class StockSim:
                     if win_standard_valid:
                         pass
 
-                    elif (lose_standard_valid and data.buy < cost_price * 0.99) or data.buy >= escape_price:
+                    elif (lose_standard_valid and data.buy < cost_price * 0.99 and tick >= tick_after_seconds(escape_tick, 600)) or data.buy >= escape_price:
                     
                         dbg_print('dangerous')
                         money += data.buy * 1000
@@ -175,7 +177,7 @@ class StockSim:
                         count -= 1
                         
                         # After lose 1%, looking for the early escape point even though we are losing money
-                        if lose_standard_valid and data.buy < cost_price * 0.99:
+                        if lose_standard_valid and data.buy < cost_price * 0.99 and tick >= tick_after_seconds(escape_tick, 600):
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
                         else:
                             self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')

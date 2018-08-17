@@ -60,7 +60,7 @@ def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
 
         # The price we can buy at that moment
         price = data.sell
-        target_price = price * 1.015
+        target_price = price * 1.0175
 
         next_tick = tick_after_minutes(tick, minutes)
         ticks = collections.OrderedDict()
