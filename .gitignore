@@ -3,5 +3,6 @@
 *.pickle
 build/
 release
+daily_update.log
 !trans_*
 

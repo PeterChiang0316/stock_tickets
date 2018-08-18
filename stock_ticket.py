@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import time, datetime, collections, os
+import time, datetime, collections, os, sys
 from tools.stock_price_utility import Stock
 from tools.stock_sim import StockSim
-from multiprocessing import Pool, Lock, Queue
+from multiprocessing import Pool, Lock, Queue, Value
 import argparse, bisect, tools
 import multiprocessing, logging
 mpl = multiprocessing.log_to_stderr()
@@ -62,7 +62,7 @@ def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
 
         # The price we can buy at that moment
         price = data.sell
-        target_price = price * 1.0175
+        target_price = price * 1.015
 
         next_tick = tick_after_minutes(tick, minutes)
         ticks = collections.OrderedDict()
@@ -175,7 +175,7 @@ def execute(s):
 
     fn = os.path.join('build', s + '.csv')
     fp = open(fn, 'w')
-    header = ['stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick', \
+    header = ['no', 'stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick', \
               'result_tick', 'interval', 'reason', 'buy_price', 'sell_price', 'K9', 'D9', 'DIF_MACD','diff']
     fp.write(','.join(header) + '\n')
     
@@ -187,6 +187,10 @@ def execute(s):
         
         total_win_standard = len(win_standard_dict[date]) - 1
         for idx, win_standard in enumerate(win_standard_dict[date]):
+            
+            with global_no.get_lock():
+                current_number = global_no.value
+                global_no.value += 1
             
             print '(%d/%d)' % (idx, total_win_standard)
             money, win_count, lose_count, tie_count, escape_count = 1000000, 0, 0, 0, 0
@@ -223,7 +227,7 @@ def execute(s):
                 sim = StockSim(s, other_date, other_transaction, fp, \
                                stock_finance[other_date], last_finance)
 
-                money, wc, lc, tc, ec = sim.execute(money, win_standard, verbose=True)
+                money, wc, lc, tc, ec = sim.execute(current_number, money, win_standard, verbose=True)
 
                 win_count += wc
                 lose_count += lc
@@ -236,7 +240,7 @@ def execute(s):
             if lose_count+win_count+tie_count+escape_count == 0:
                 break
 
-            result = map(str, [s, date] + win_standard + [win_count, lose_count, tie_count, escape_count, money])
+            result = map(str, [current_number, s, date] + win_standard + [win_count, lose_count, tie_count, escape_count, money])
 
             queue.put(result)
 
@@ -247,12 +251,13 @@ def execute(s):
 
 
 
-def init(l, q):
+def init(l, q, no):
     global lock
     global queue
+    global global_no
     lock = l
     queue = q
-
+    global_no = no
 
 if __name__ == '__main__':
 
@@ -268,6 +273,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.update:
+        sys.stdout = open('daily_update.log', 'w')
         for s in stock_list:
             print 'updating ', s
             ship = Stock(s)
@@ -293,10 +299,11 @@ if __name__ == '__main__':
 
         lock = Lock()
         queue = Queue()
-
+        global_no = Value('i', 0)
+        
         if args.pll:
 
-            pool = Pool(initializer=init, initargs=(lock, queue))
+            pool = Pool(3, initializer=init, initargs=(lock, queue, global_no))
             res = [pool.apply_async(execute, (s,)) for s in stock_list]
             results = [r.get() for r in res]
 
@@ -306,7 +313,7 @@ if __name__ == '__main__':
                 execute(s)
         
         f_result = open('train_data.csv', 'w')
-        f_result.write('stock,date,second,number,inout_ratio,main_ratio,win,lose,tie,escape,money\n')
+        f_result.write('no,stock,date,second,number,inout_ratio,main_ratio,win,lose,tie,escape,money\n')
 
         while not queue.empty():
             f_result.write(','.join(queue.get()) + '\n')

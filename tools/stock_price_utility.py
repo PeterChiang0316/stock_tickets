@@ -150,20 +150,24 @@ class Stock:
         return self.trans_list[idx:idx+count]
 
     def update_daily_info(self, today_date=None):
-    
+        
         # Not specified date, use today
         if not today_date:
             today = datetime.datetime.today().date()
             year, month, day = today.year, today.month, today.day
             today_date = '%d%0.2d%0.2d' % (year, month, day)
-            print 'Today is %s' % today_date
         
         filename = os.path.join('data', self.stock, 'trans_' + today_date + '.pickle')
         
         if os.path.exists(filename):
             print 'already download'
         else:
-            pickle_save(filename, stock_daily_parser(self.stock))
+            try:
+                pickle_save(filename, stock_daily_parser(self.stock))
+                print '[%s][%s] download success' % (self.stock, today_date)
+            except:
+                print '[%s][%s] download fail' % (self.stock, today_date)
+            
             
 ###########################################################
 # Private Function

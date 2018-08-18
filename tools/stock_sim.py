@@ -23,7 +23,7 @@ class StockSim:
         self.finance = finance
         self.last_finance = last_finance
 
-    def add_record(self, win_standard, buy_tick, result_tick, buy_price, sell_price, diff, reason):
+    def add_record(self, no, win_standard, buy_tick, result_tick, buy_price, sell_price, diff, reason):
 
         def time_diff(t1, t2):
             t1 = datetime.datetime(2018, 5, 25, t1 / 10000, (t1 / 100) % 100, t1 % 100)
@@ -31,6 +31,7 @@ class StockSim:
             return (t2 - t1).total_seconds()
 
         # stock,date,second,number,inout_ratio,main_ratio,buy_tick,result_tick,interval,reason,buy_price,sell_price,diff
+        self.output_file.write(str(no) + ',')
         self.output_file.write(self.stock + ',')
         self.output_file.write(self.date + ',')
         self.output_file.write(','.join(map(str,win_standard)) + ',')
@@ -45,7 +46,7 @@ class StockSim:
         self.output_file.write(str(self.last_finance['DIF_MACD']) + ',')
         self.output_file.write(str(diff) + '\n')
 
-    def execute(self, money, win_standard, verbose=True):
+    def execute(self, no, money, win_standard, verbose=True):
 
         def tick_after_seconds(time, seconds):
             now = datetime.datetime(2018, 5, 25, time / 10000, (time / 100) % 100, time % 100)
@@ -132,7 +133,7 @@ class StockSim:
                     money += data.buy * 1000
                     count -= 1
                     tie_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'EXPIRE')
+                    self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'EXPIRE')
                 break
 
             if is_brought:
@@ -154,7 +155,7 @@ class StockSim:
                         is_brought = False
                         count -= 1
                         win_count += 1
-                        self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'WIN')
+                        self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'WIN')
 
                 elif data.buy <= lose_price:
                     dbg_print('lose')
@@ -162,7 +163,7 @@ class StockSim:
                     is_brought = False
                     count -= 1
                     lose_count += 1
-                    self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE')
+                    self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE')
 
                 elif tick >= escape_tick :
 
@@ -171,16 +172,17 @@ class StockSim:
 
                     elif (lose_standard_valid and data.buy < cost_price * 0.99 and tick >= tick_after_seconds(escape_tick, 600)) or data.buy >= escape_price:
                     
-                        dbg_print('dangerous')
                         money += data.buy * 1000
                         is_brought = False
                         count -= 1
                         
                         # After lose 1%, looking for the early escape point even though we are losing money
                         if lose_standard_valid and data.buy < cost_price * 0.99 and tick >= tick_after_seconds(escape_tick, 600):
-                            self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
+                            self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'LOSE_ESCAPE')
+                            print 'LOSE_ESCAPE'
                         else:
-                            self.add_record(win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')
+                            self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'SMART_ESCAPE')
+                            print 'SMART_ESCAPE'
 
                         escape_count += 1
                 else:
