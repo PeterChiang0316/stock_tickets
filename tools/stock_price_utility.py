@@ -80,7 +80,11 @@ class Stock:
         pos = bisect.bisect_right(self.trans_list, date)
         return self.trans_list[pos] if pos < len(self.trans_list) else None
 
-    def get_stock_finance(self, date=None):
+    def get_stock_finance(self):
+    
+        today = datetime.datetime.today().date()
+        year, month, day = today.year, today.month, today.day
+        today_date = '%d%0.2d%0.2d' % (year, month, day)
         
         filename = os.path.join('data', self.stock, 'finance.pickle')
 
@@ -88,16 +92,11 @@ class Stock:
 
             d = pickle_load(filename)
 
-            if date is None:
-                return d
-
-            if date in d:
-                return d[date]
-            elif int(d.keys()[-1]) < date:
+            if d.keys()[-1] < today_date:
                 pass
             else:
-                assert date in d, 'The stock %s is not open at %s' % (self.stock, date)
-                    
+                return d
+                   
         else:    
         
             d = collections.OrderedDict()
@@ -128,10 +127,10 @@ class Stock:
         for element in json:
             if int(element['DealQty']) == 0:
                 continue
-            d[element['Date']] = element
+            if element['Date'] not in d:
+                d[element['Date']] = element
         
         pickle_save(filename, d)
-        self.cache['date_list_cache'] = d
             
         return d
     
@@ -287,8 +286,6 @@ def stock_daily_parser(stock):
     res = s.post('http://pchome.megatime.com.tw/stock/sto0/ock3/sid%s.html' % stock, data=data)
     res.encoding = 'utf-8'
     content = res.text.encode('utf-8')
-    #with open('tmp.html') as f:
-    #    content = f.read()
     
     content = re.sub(r'<font.*?>', '', content)
     content = re.sub(r'</font.*?>', '', content)
@@ -319,6 +316,20 @@ def stock_daily_parser(stock):
 
 
 def update_TWA_finance():
+
+    today = datetime.datetime.today().date()
+    year, month, day = today.year, today.month, today.day
+    today_date = '%d%0.2d%0.2d' % (year, month, day)
+    
+    if os.path.exists('data/TWA.pickle'):
+        d = pickle_load('data/TWA.pickle')
+        if d.keys()[-1] < today_date:
+            print '[SYSTEM] Updating TWA finance...'
+        else:
+            return
+    else:
+        d = collections.OrderedDict()
+        
     ck, session = get_stock_ck()
     h = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -339,18 +350,19 @@ def update_TWA_finance():
         '_': '1533974045257'
     }
     res = session.get('https://www.cmoney.tw/notice/chart/stock-chart-service.ashx', headers=h, params=data)
-    d = collections.OrderedDict()
+    
     for element in res.json()['DataLine']:
         date, open_price, high_price, low_price, close_price, tmp, diff, rate, tmp2, money = element
         date_string = datetime.datetime.fromtimestamp(date/1000.0).strftime('%Y%m%d')
-        d[date_string] = {
-            'open_price': open_price,
-            'high_price': high_price,
-            'close_price': close_price,
-            'diff': diff,
-            'rate': rate,
-            'money': money * 1000
-        }
+        if date_string not in d:
+            d[date_string] = {
+                'open_price': open_price,
+                'high_price': high_price,
+                'close_price': close_price,
+                'diff': diff,
+                'rate': rate,
+                'money': money * 1000
+            }
     pickle_save('data/TWA.pickle', d)
 
 ###########################################################

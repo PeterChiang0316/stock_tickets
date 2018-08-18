@@ -4,7 +4,9 @@ from tools.stock_price_utility import Stock
 from tools.stock_sim import StockSim
 from multiprocessing import Pool, Lock, Queue
 import argparse, bisect, tools
-
+import multiprocessing, logging
+mpl = multiprocessing.log_to_stderr()
+mpl.setLevel(logging.INFO)
 
 def magnitude_test(stock):
     ship = Stock(stock)
@@ -152,12 +154,12 @@ def execute(s):
     print 'Start test %s' % s
 
     win_standard_dict = {}
-    if not os.path.exists('data/TWA.pickle'):
-        tools.stock_price_utility.update_TWA_finance()
-
+    sim_start_date = '20180525'
+    sim_end_date = '20180815'
+    
     TWA = tools.stock_price_utility.pickle_load('data/TWA.pickle')
 
-    for date in ship.iterate_date('20180525', '20180715'):
+    for date in ship.iterate_date(sim_start_date, sim_end_date):
 
         print '[%s] Date: %s' % (s, date)
         info = ship.get_daily_info(date, every_transaction=True)
@@ -176,17 +178,20 @@ def execute(s):
     header = ['stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick', \
               'result_tick', 'interval', 'reason', 'buy_price', 'sell_price', 'K9', 'D9', 'DIF_MACD','diff']
     fp.write(','.join(header) + '\n')
-
-    for date in ship.iterate_date('20180525', '20180715'):
+    
+    stock_finance = ship.get_stock_finance()
+    
+    for date in ship.iterate_date(sim_start_date, sim_end_date):
 
         if date not in win_standard_dict or not win_standard_dict[date]: continue
-
-        #for other_date in ship.iterate_range(date, 5):
-        for win_standard in win_standard_dict[date]:
-
+        
+        total_win_standard = len(win_standard_dict[date]) - 1
+        for idx, win_standard in enumerate(win_standard_dict[date]):
+            
+            print '(%d/%d)' % (idx, total_win_standard)
             money, win_count, lose_count, tie_count, escape_count = 1000000, 0, 0, 0, 0
 
-            for other_date in ship.iterate_date('20180525', '20180715'):
+            for other_date in ship.iterate_date(sim_start_date, sim_end_date):
 
                 # Filter the date that not safe
                 # reference: https://xstrader.net
@@ -202,7 +207,7 @@ def execute(s):
                     print '[SYSTEM]', other_date, date
                     continue
 
-                stock_finance = ship.get_stock_finance()
+                
                 left = bisect.bisect_left(stock_finance.keys(), other_date)
                 last_finance = stock_finance.values()[left-1]
 
@@ -266,14 +271,24 @@ if __name__ == '__main__':
         for s in stock_list:
             print 'updating ', s
             ship = Stock(s)
-            ship.update_daily_info()
+            stock_finance = ship.get_stock_finance()
+            
+            today = datetime.datetime.today().date()
+            year, month, day = today.year, today.month, today.day
+            today_date = '%d%0.2d%0.2d' % (year, month, day)
+            
+            if today_date in stock_finance:
+                ship.update_daily_info()
+            else:
+                print 'Stock is not open today'
         exit(0)
 
     # Real simulation
     else:
 
         if not os.path.exists('build'): os.mkdir('build')
-
+        tools.stock_price_utility.update_TWA_finance()
+        
         start_time = time.time()
 
         lock = Lock()
