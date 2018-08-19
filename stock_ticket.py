@@ -5,6 +5,7 @@ from tools.stock_sim import StockSim
 from multiprocessing import Pool, Lock, Queue, Value
 import argparse, bisect, tools
 import multiprocessing, logging
+import numpy as np
 mpl = multiprocessing.log_to_stderr()
 mpl.setLevel(logging.INFO)
 
@@ -148,14 +149,23 @@ def execute(s):
         ma20 = sum(map(lambda k: k['close_price'], TWA.values()[right - 20:right])) / 20
         ma5 = sum(map(lambda k: k['close_price'], TWA.values()[right - 5:right])) / 5
         return ma5 >= ma20
-
+    
+    def get_support_resist_line(finance, index):
+        date_list = finance.keys()
+        close_price_20 = map(lambda k: k['ClosePr'], finance.values()[index - 19:index + 1])
+        #std = np.std(close_price_10, ddof = 1)
+        #support_line = sum(close_price_10)/10 - std * 2
+        #resist_line = sum(close_price_10)/10 + std * 2
+        ma20 = sum(close_price_20)/20
+        return ma20
+    
     ship = Stock(s)
 
     print 'Start test %s' % s
 
     win_standard_dict = {}
     sim_start_date = '20180525'
-    sim_end_date = '20180815'
+    sim_end_date = '20180715'
     
     TWA = tools.stock_price_utility.pickle_load('data/TWA.pickle')
 
@@ -200,7 +210,7 @@ def execute(s):
                 # Filter the date that not safe
                 # reference: https://xstrader.net
                 if not ma5comparema20(other_date, TWA): continue
-
+                
                 print '[%s] simulating %s ...' % (s, other_date)
 
                 other_info = ship.get_daily_info(other_date, every_transaction=True)
@@ -210,11 +220,20 @@ def execute(s):
                 if not other_transaction or other_date == date:
                     print '[SYSTEM]', other_date, date
                     continue
-
                 
                 left = bisect.bisect_left(stock_finance.keys(), other_date)
                 last_finance = stock_finance.values()[left-1]
-
+                
+                # reference: https://www.wantgoo.com/blog/article/content?blogname=98845&articleid=33
+                #before_last_finance = stock_finance.values()[left-2]
+                #
+                #last_ma = get_support_resist_line(stock_finance, left-1)
+                #before_last_ma = get_support_resist_line(stock_finance, left-2)
+                #
+                #if before_last_finance['LowPr'] > before_last_ma and last_finance['LowPr'] <= last_ma:
+                #    print '[SYSTEM][%s][%s] is under ma' % (s, other_date) 
+                #    continue
+                
                 # reference: http://www.cmoney.tw/learn/course/technicalanalysisfast/topic/1846
                 if last_finance['K9'] >= 80 or last_finance['D9'] >= 80:
                     print '[SYSTEM] K/D value exceed 80'
