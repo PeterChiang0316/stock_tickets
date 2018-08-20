@@ -2,7 +2,6 @@
 
 import requests, os, re, datetime, collections, math, bisect
 import time, sys
-import cPickle as pickle
 
 ###########################################################
 # StockSim class

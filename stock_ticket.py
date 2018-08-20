@@ -162,12 +162,11 @@ def execute(s):
     ship = Stock(s)
 
     print 'Start test %s' % s
-
     win_standard_dict = {}
     sim_start_date = '20180525'
     sim_end_date = '20180715'
     
-    TWA = tools.stock_price_utility.pickle_load('data/TWA.pickle')
+    TWA = tools.stock_price_utility.json_load('data/TWA.json')
 
     for date in ship.iterate_date(sim_start_date, sim_end_date):
 
@@ -235,12 +234,14 @@ def execute(s):
                 #    continue
                 
                 # reference: http://www.cmoney.tw/learn/course/technicalanalysisfast/topic/1846
-                if last_finance['K9'] >= 80 or last_finance['D9'] >= 80:
-                    print '[SYSTEM] K/D value exceed 80'
-                    continue
-
-                if abs(last_finance['DIF_MACD']) < 0.5:
-                    print '[SYSTEM] DIF_MACD too small'
+                #if last_finance['K9'] >= 80 or last_finance['D9'] >= 80:
+                #    print '[SYSTEM] K/D value exceed 80'
+                #    continue
+                #
+                #if abs(last_finance['DIF_MACD']) < 0.5:
+                #    print '[SYSTEM] DIF_MACD too small'
+                #    continue
+                if other_date not in win_standard_dict or not win_standard_dict[other_date]:
                     continue
 
                 sim = StockSim(s, other_date, other_transaction, fp, \

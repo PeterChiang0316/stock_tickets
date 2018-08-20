@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-import requests, os, re, datetime, collections, math
+import requests, os, re, datetime, collections, math, json
 import numpy as np
 import xlsxwriter
 from bs4 import BeautifulSoup
 import time, sys
-import StringIO
-import cPickle as pickle
 import bisect
+import ujson
 ###########################################################
 # Global class
 ###########################################################
@@ -40,7 +39,7 @@ class Stock:
         
         self.cache = {}
 
-        pattern = re.compile('trans_\d\d\d\d\d\d\d\d\.pickle')
+        pattern = re.compile('trans_\d\d\d\d\d\d\d\d\.json')
         self.trans_list = sorted(filter(pattern.match, os.listdir(self.stock_data_folder)))
         self.trans_list = map(lambda v: v[6:14], self.trans_list)
 
@@ -53,7 +52,9 @@ class Stock:
         return day in self.trans_list
     
     def get_daily_info(self, date, every_transaction=False):
-    
+        
+        if date in self.cache: return self.cache[date]
+        
         # Check date format
         assert len(date) == 8, 'Date format error, should be in yyyymmdd format ex: 20171011 but get %s' % date
         assert int(date[:4]) > 1990, 'Year error'
@@ -66,15 +67,17 @@ class Stock:
         def transaction_info_parser():
         
             # If we need daily transaction info, search if the data is available
-            filename = os.path.join('data', self.stock, 'trans_'+date+'.pickle')
+            filename = os.path.join('data', self.stock, 'trans_'+date+'.json')
 
             if not os.path.exists(filename):
                 return None
 
-            d = pickle_load(filename)
+            d = json_load(filename)
             return collections.OrderedDict((k, DailyInfo(v)) for k, v in d.items())
-            
-        return DetailInfo({'data': transaction_info_parser()})
+        
+        self.cache[date] = DetailInfo({'data': transaction_info_parser()})
+        
+        return self.cache[date]
     
     def get_next_opening(self, date):
         pos = bisect.bisect_right(self.trans_list, date)
@@ -86,11 +89,11 @@ class Stock:
         year, month, day = today.year, today.month, today.day
         today_date = '%d%0.2d%0.2d' % (year, month, day)
         
-        filename = os.path.join('data', self.stock, 'finance.pickle')
+        filename = os.path.join('data', self.stock, 'finance.json')
 
         if os.path.exists(filename):
 
-            d = pickle_load(filename)
+            d = json_load(filename)
 
             if d.keys()[-1] < today_date:
                 pass
@@ -130,7 +133,7 @@ class Stock:
             if element['Date'] not in d:
                 d[element['Date']] = element
         
-        pickle_save(filename, d)
+        json_save(filename, d)
             
         return d
     
@@ -157,13 +160,13 @@ class Stock:
             year, month, day = today.year, today.month, today.day
             today_date = '%d%0.2d%0.2d' % (year, month, day)
         
-        filename = os.path.join('data', self.stock, 'trans_' + today_date + '.pickle')
+        filename = os.path.join('data', self.stock, 'trans_' + today_date + '.json')
         
         if os.path.exists(filename):
             print 'already download'
         else:
             try:
-                pickle_save(filename, stock_daily_parser(self.stock))
+                json_save(filename, stock_daily_parser(self.stock))
                 print '[%s][%s] download success' % (self.stock, today_date)
             except:
                 print '[%s][%s] download fail' % (self.stock, today_date)
@@ -172,29 +175,26 @@ class Stock:
 ###########################################################
 # Private Function
 ###########################################################
-def pickle_save(filename, data):
+def json_save(filename, data):
     '''
-    :param filename: pickle filename
+    :param filename: json filename
     :param data: the dictionary that store date
     :return: None
     '''
-    with open(filename, 'wb') as f:
-        pickle.dump(data, f)
+    with open(filename, 'w') as fjson:
+        json.dump(data, fjson, ensure_ascii=False, sort_keys=True, indent=4)
 
-def pickle_load(filename):
+def json_load(filename):
     '''
-    :param filename: the pickle filename
+    :param filename: the json filename
     :return: the dictionary that store date
     '''
     if not os.path.exists(filename):
         return None
-
-    with open(filename, 'rb') as f:
-        data = f.read().replace(b'\r\n', b'\n')
-        output = StringIO.StringIO(data)
-        data = pickle.load(output)
-
-    return data
+    with open(filename) as f:
+        d = ujson.decode(f.read())
+        d = collections.OrderedDict(sorted(d.items(), key=lambda k:k[0]))
+    return d
     
 def xlsWriter(filename, work_list):
     working_book = xlsxwriter.Workbook(filename + ".xlsx".encode('utf-8'))
@@ -325,8 +325,8 @@ def update_TWA_finance():
     year, month, day = today.year, today.month, today.day
     today_date = '%d%0.2d%0.2d' % (year, month, day)
     
-    if os.path.exists('data/TWA.pickle'):
-        d = pickle_load('data/TWA.pickle')
+    if os.path.exists('data/TWA.json'):
+        d = json_load('data/TWA.json')
         if d.keys()[-1] < today_date:
             print '[SYSTEM] Updating TWA finance...'
         else:
@@ -367,7 +367,7 @@ def update_TWA_finance():
                 'rate': rate,
                 'money': money * 1000
             }
-    pickle_save('data/TWA.pickle', d)
+    json_save('data/TWA.json', d)
 
 ###########################################################
 # Public Function

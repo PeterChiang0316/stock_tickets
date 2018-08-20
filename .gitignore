@@ -1,6 +1,7 @@
 .idea
 *.pyc
 *.pickle
+*.json
 build/
 release
 daily_update.log
