@@ -105,24 +105,27 @@ if __name__ == '__main__':
 
     print df['s'].unique()
 
-    hit_data = df.loc[df['BOOL_HIT'] > 0].reset_index(drop=True)
-    print hit_data
-    hit = len(hit_data)
-    print hit
-    data_count_diff = len(df['BOOL_HIT']) - hit
-    print data_count_diff
-    for _ in range(data_count_diff):
-        df = df.append(hit_data.iloc[random.randint(0, hit-1), :], ignore_index=True)
-
-    print len(df.loc[df['BOOL_HIT'] > 0]), len(df['BOOL_HIT']) - hit
-
     feature_names = ['K9', 'D9', 'DIF_MACD', 'BIAS5', 'BIAS10', 'RSI5', 'RSI10']
     X = df[feature_names]
     y = df['BOOL_HIT']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
+    print len(y_train.values)
 
-    print sum(y_test), sum(y_train)
+    X_train['BOOL_HIT'] = y_train.values
+
+    hit_data = X_train.loc[X_train['BOOL_HIT'] > 0].reset_index(drop=True)
+    hit = len(hit_data)
+    data_count_diff = len(X_train['BOOL_HIT']) - hit
+    for _ in range(data_count_diff):
+        X_train = X_train.append(hit_data.iloc[random.randint(0, hit-1), :], ignore_index=True)
+
+    y_train = X_train['BOOL_HIT']
+    X_train = X_train[feature_names]
+
+
+    print len(y_train), hit
+    print type(y_test), type(X_test)
 
     logreg = LogisticRegression()
     logreg.fit(X_train, y_train)
