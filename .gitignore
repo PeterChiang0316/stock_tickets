@@ -6,4 +6,5 @@ build/
 release
 daily_update.log
 !trans_*
+!DJI.json
 
