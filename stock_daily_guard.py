@@ -3,7 +3,7 @@ from tools.stock_price_utility import Stock
 import pandas as pd
 import bisect
 import numpy as np
-import random
+import random, math
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -82,6 +82,11 @@ def accuracy(golden, test):
     print 'success percentage %f' % (success_count/total_success)
     print 'success_count %d/ miss_count %d' % (success_count, miss_count)
 
+
+def sigmoid(x):
+    return (1 / (1 + math.exp(-x/4)) - 0.5) * 2
+
+
 if __name__ == '__main__':
     #main()
     #exit(0)
@@ -89,12 +94,12 @@ if __name__ == '__main__':
     #df['STD5'] = #df['STD5']/df['MA5']
     #df['STD10'] = 100*df['STD10']/df['MA10']
     df['DIF_MACD'] = (df['DIF_MACD']-df['DIF_MACD'].min())/(df['DIF_MACD'].max()-df['DIF_MACD'].min())
-    df['BIAS5'] = (df['BIAS5']-df['BIAS5'].min())/(df['BIAS5'].max()-df['BIAS5'].min())
-    df['BIAS10'] = (df['BIAS10']-df['BIAS10'].min())/(df['BIAS10'].max()-df['BIAS10'].min())
-    df['RSI5'] = df['RSI5'] / 100
-    df['RSI10'] = df['RSI10']/100
-    df['K9'] = df['K9']/100
-    df['D9'] = df['D9']/100
+    df['BIAS5'] = map(sigmoid, df['BIAS5'])
+    df['BIAS10'] = map(sigmoid, df['BIAS10'])
+    df['RSI5'] = (df['RSI5']/100)*2-1
+    df['RSI10'] = (df['RSI10']/100)*2-1
+    df['K9'] = (df['K9']/100)*2-1
+    df['D9'] = (df['D9']/100)*2-1
 
 
     for s in df['s'].unique():
@@ -105,27 +110,24 @@ if __name__ == '__main__':
 
     print df['s'].unique()
 
-    feature_names = ['K9', 'D9', 'DIF_MACD', 'BIAS5', 'BIAS10', 'RSI5', 'RSI10']
-    X = df[feature_names]
-    y = df['BOOL_HIT']
+    feature_names = ['K9', 'D9', 'DIF_MACD', 'BIAS5', 'BIAS10', 'RSI5', 'RSI10', 'BOOL_HIT']
+    X = df.loc[:, feature_names]
+    y = df.loc[:, 'BOOL_HIT']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
-    print len(y_train.values)
-
-    X_train['BOOL_HIT'] = y_train.values
 
     hit_data = X_train.loc[X_train['BOOL_HIT'] > 0].reset_index(drop=True)
     hit = len(hit_data)
-    data_count_diff = len(X_train['BOOL_HIT']) - hit
+    data_count_diff = len(X_train['BOOL_HIT']) - hit * 2
     for _ in range(data_count_diff):
         X_train = X_train.append(hit_data.iloc[random.randint(0, hit-1), :], ignore_index=True)
 
+    print X_train.head()
     y_train = X_train['BOOL_HIT']
-    X_train = X_train[feature_names]
-
+    X_train = X_train[feature_names].drop(columns='BOOL_HIT')
+    X_test = X_test.drop(columns='BOOL_HIT')
 
     print len(y_train), hit
-    print type(y_test), type(X_test)
 
     logreg = LogisticRegression()
     logreg.fit(X_train, y_train)
@@ -137,10 +139,9 @@ if __name__ == '__main__':
           .format(logreg.score(X_test, y_test)))
 
     clf = DecisionTreeClassifier().fit(X_train, y_train)
+    accuracy(y_test.values, clf.predict(X_test))
     print('Accuracy of Decision Tree classifier on training set: {:.2f}'
           .format(clf.score(X_train, y_train)))
-
-    accuracy(y_test.values, clf.predict(X_test))
 
     print('Accuracy of Decision Tree classifier on test set: {:.2f}'
           .format(clf.score(X_test, y_test)))
@@ -156,7 +157,6 @@ if __name__ == '__main__':
     svm = SVC()
     svm.fit(X_train, y_train)
     accuracy(y_test.values, svm.predict(X_test))
-    print svm.predict(X_test)
     print('Accuracy of SVM classifier on training set: {:.2f}'
           .format(svm.score(X_train, y_train)))
     print('Accuracy of SVM classifier on test set: {:.2f}'

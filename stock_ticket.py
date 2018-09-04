@@ -294,19 +294,28 @@ if __name__ == '__main__':
 
     if args.update:
         sys.stdout = open('daily_update.log', 'w')
-        for s in stock_list:
-            print 'updating ', s
-            ship = Stock(s)
-            stock_finance = ship.get_stock_finance()
-            
-            today = datetime.datetime.today().date()
-            year, month, day = today.year, today.month, today.day
-            today_date = '%d%0.2d%0.2d' % (year, month, day)
-            
-            if today_date in stock_finance:
-                ship.update_daily_info()
-            else:
-                print 'Stock is not open today'
+        with open('data/stock_list.txt') as f:
+            stocks = map(lambda e:e.strip(), f.readlines())
+            print stocks
+        stock_list += stocks
+        for s in set(stock_list):
+            try:
+                print 'updating ', s
+                ship = Stock(s)
+                stock_finance = ship.get_stock_finance()
+
+                today = datetime.datetime.today().date()
+                year, month, day = today.year, today.month, today.day
+                today_date = '%d%0.2d%0.2d' % (year, month, day)
+
+                if today_date in stock_finance:
+                    ship.update_daily_info()
+                else:
+                    print 'Stock is not open today'
+            except:
+                print s + ' fail'
+            finally:
+                time.sleep(5)
         exit(0)
 
     # Real simulation
