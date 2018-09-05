@@ -208,7 +208,7 @@ def execute(s):
 
                 # Filter the date that not safe
                 # reference: https://xstrader.net
-                if not ma5comparema20(other_date, TWA): continue
+                #if not ma5comparema20(other_date, TWA): continue
                 
                 print '[%s] simulating %s ...' % (s, other_date)
 
@@ -284,7 +284,7 @@ if __name__ == '__main__':
     stock_list = ['2454', '2439', '2455', '2448', '2377', '3035',
                  '2456', '2313', '5269', '2383', '1312', '2353', '1707',
                  '3443', '4906']
-    stock_list += ['2915', '5264', '2311', '2105', '3673', '2542', '3044', '2610', '6116', '1319', '2059', '2356']
+    stock_list += ['2915', '5264', '2105', '3673', '2542', '3044', '2610', '6116', '1319', '2059', '2356']
     stock_list += ['3017', '2485', '1536', '3376', '2603', '6285', '3665', '1476']
     
     parser = argparse.ArgumentParser(description='')

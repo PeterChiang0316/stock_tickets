@@ -110,51 +110,49 @@ if __name__ == '__main__':
 
     print df['s'].unique()
 
-    feature_names = ['K9', 'D9', 'DIF_MACD', 'BIAS5', 'BIAS10', 'RSI5', 'RSI10', 'BOOL_HIT']
+    feature_names = ['K9', 'D9', 'BIAS5', 'BIAS10', 'RSI5', 'RSI10']
     X = df.loc[:, feature_names]
     y = df.loc[:, 'BOOL_HIT']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
-    hit_data = X_train.loc[X_train['BOOL_HIT'] > 0].reset_index(drop=True)
-    hit = len(hit_data)
-    data_count_diff = len(X_train['BOOL_HIT']) - hit * 2
-    for _ in range(data_count_diff):
-        X_train = X_train.append(hit_data.iloc[random.randint(0, hit-1), :], ignore_index=True)
+    #hit_data = X_train.loc[X_train['BOOL_HIT'] > 0].reset_index(drop=True)
+    #hit = len(hit_data)
+    #data_count_diff = len(X_train['BOOL_HIT']) - hit * 2
+    ##for _ in range(data_count_diff):
+    #X_train = X_train.append(hit_data.iloc[random.sample(range(hit), data_count_diff), :], ignore_index=True)
+#
+    #print X_train.head()
+    #y_train = X_train['BOOL_HIT']
+    #X_train = X_train[feature_names].drop(columns='BOOL_HIT')
+    #X_test = X_test.drop(columns='BOOL_HIT')
 
-    print X_train.head()
-    y_train = X_train['BOOL_HIT']
-    X_train = X_train[feature_names].drop(columns='BOOL_HIT')
-    X_test = X_test.drop(columns='BOOL_HIT')
+    #logreg = LogisticRegression()
+    #logreg.fit(X_train, y_train)
+    #accuracy(y_test.values, logreg.predict(X_test))
 
-    print len(y_train), hit
+    #print('Accuracy of Logistic regression classifier on training set: {:.2f}'
+    #      .format(logreg.score(X_train, y_train)))
+    #print('Accuracy of Logistic regression classifier on test set: {:.2f}'
+    #      .format(logreg.score(X_test, y_test)))
 
-    logreg = LogisticRegression()
-    logreg.fit(X_train, y_train)
-    accuracy(y_test.values, logreg.predict(X_test))
+    #clf = DecisionTreeClassifier().fit(X_train, y_train)
+    #accuracy(y_test.values, clf.predict(X_test))
+    #print('Accuracy of Decision Tree classifier on training set: {:.2f}'
+    #      .format(clf.score(X_train, y_train)))
 
-    print('Accuracy of Logistic regression classifier on training set: {:.2f}'
-          .format(logreg.score(X_train, y_train)))
-    print('Accuracy of Logistic regression classifier on test set: {:.2f}'
-          .format(logreg.score(X_test, y_test)))
+    #print('Accuracy of Decision Tree classifier on test set: {:.2f}'
+    #      .format(clf.score(X_test, y_test)))
 
-    clf = DecisionTreeClassifier().fit(X_train, y_train)
-    accuracy(y_test.values, clf.predict(X_test))
-    print('Accuracy of Decision Tree classifier on training set: {:.2f}'
-          .format(clf.score(X_train, y_train)))
+    #knn = KNeighborsClassifier()
+    #knn.fit(X_train, y_train)
+    #accuracy(y_test.values, knn.predict(X_test))
+    #print('Accuracy of K-NN classifier on training set: {:.2f}'
+    #      .format(knn.score(X_train, y_train)))
+    #print('Accuracy of K-NN classifier on test set: {:.2f}'
+    #      .format(knn.score(X_test, y_test)))
 
-    print('Accuracy of Decision Tree classifier on test set: {:.2f}'
-          .format(clf.score(X_test, y_test)))
-
-    knn = KNeighborsClassifier()
-    knn.fit(X_train, y_train)
-    accuracy(y_test.values, knn.predict(X_test))
-    print('Accuracy of K-NN classifier on training set: {:.2f}'
-          .format(knn.score(X_train, y_train)))
-    print('Accuracy of K-NN classifier on test set: {:.2f}'
-          .format(knn.score(X_test, y_test)))
-
-    svm = SVC()
+    svm = SVC(class_weight='balanced', C=1024)
     svm.fit(X_train, y_train)
     accuracy(y_test.values, svm.predict(X_test))
     print('Accuracy of SVM classifier on training set: {:.2f}'
