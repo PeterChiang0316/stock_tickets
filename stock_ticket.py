@@ -6,9 +6,19 @@ from multiprocessing import Pool, Lock, Queue, Value
 import argparse, bisect, tools
 import multiprocessing, logging
 import numpy as np
-mpl = multiprocessing.log_to_stderr()
-mpl.setLevel(logging.INFO)
 
+
+class ExceptionWrapper(object):
+
+    def __init__(self, ee):
+        self.ee = ee
+        __,  __, self.tb = sys.exc_info()
+
+    def re_raise(self):
+        #raise self.ee.with_traceback(self.tb)
+        # for Python 2 replace the previous line by:
+        raise self.ee, None, self.tb
+        
 def magnitude_test(stock):
     ship = Stock(stock)
     magnitude = []
@@ -141,7 +151,12 @@ def stock_win_point_test(s, d, transaction, minutes=5, verbose=True):
 
     return statistics
 
-
+def execute_shell(s):
+    try:
+        return execute(s)
+    except Exception as e:
+        return ExceptionWrapper(e)
+        
 def execute(s):
     def ma5comparema20(d, TWA):
         date_list = TWA.keys()
@@ -290,6 +305,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--update', help='Get today\'s data', action='store_true')
     parser.add_argument('-pll', help='Use multiprocessing', action='store_true')
+    parser.add_argument('-debug', help='Debug multiprocessing', action='store_true')
     args = parser.parse_args()
 
     if args.update:
@@ -333,9 +349,18 @@ if __name__ == '__main__':
         if args.pll:
 
             pool = Pool(3, initializer=init, initargs=(lock, queue, global_no))
-            res = [pool.apply_async(execute, (s,)) for s in stock_list]
-            results = [r.get() for r in res]
-
+            if args.debug:
+                import tblib.pickling_support
+                tblib.pickling_support.install()
+                res = [pool.apply_async(execute_shell, (s,)) for s in stock_list]
+            else:
+                res = [pool.apply_async(execute, (s,)) for s in stock_list]
+            
+            for r in res:
+                result = r.get()
+                if isinstance(result, ExceptionWrapper):
+                    result.re_raise()
+            
         else:
 
             for s in stock_list:

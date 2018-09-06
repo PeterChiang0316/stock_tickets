@@ -92,18 +92,27 @@ class Stock:
         filename = os.path.join('data', self.stock, 'finance.json')
 
         if os.path.exists(filename):
-
-            d = json_load(filename)
-
-            if d.keys()[-1] < today_date:
-                pass
-            else:
-                return d
+            try:
+                # For preventing data error in the existed file
+                d = json_load(filename)
+                
+                # finance.json exists but too old, update it
+                if d.keys()[-1] < self.trans_list[-1]:
+                    pass
+                # Otherwise, return directly in nomal case
+                else:
+                    return d
+            except:
+                # [ERROR] something wrong in finance.json, re-download it
+                d = collections.OrderedDict()
                    
         else:    
-        
+            # For the first
             d = collections.OrderedDict()
-            
+        
+        print '#####################################################################'
+        print '# Start crawler                                                     #'
+        print '#####################################################################'
         cmkey, session= get_stock_cmkey()
         data = {
             'action': 'GetTechnicalData',
