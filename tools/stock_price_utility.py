@@ -83,7 +83,7 @@ class Stock:
         pos = bisect.bisect_right(self.trans_list, date)
         return self.trans_list[pos] if pos < len(self.trans_list) else None
 
-    def get_stock_finance(self):
+    def get_stock_finance(self, force_update=False):
     
         today = datetime.datetime.today().date()
         year, month, day = today.year, today.month, today.day
@@ -97,7 +97,7 @@ class Stock:
                 d = json_load(filename)
                 
                 # finance.json exists but too old, update it
-                if d.keys()[-1] < self.trans_list[-1]:
+                if d.keys()[-1] < self.trans_list[-1] or force_update:
                     pass
                 # Otherwise, return directly in nomal case
                 else:

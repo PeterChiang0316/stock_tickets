@@ -309,7 +309,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.update:
-        sys.stdout = open('daily_update.log', 'w')
+        #sys.stdout = open('daily_update.log', 'w')
         with open('data/stock_list.txt') as f:
             stocks = map(lambda e:e.strip(), f.readlines())
             print stocks
@@ -318,7 +318,7 @@ if __name__ == '__main__':
             try:
                 print 'updating ', s
                 ship = Stock(s)
-                stock_finance = ship.get_stock_finance()
+                stock_finance = ship.get_stock_finance(force_update=True)
 
                 today = datetime.datetime.today().date()
                 year, month, day = today.year, today.month, today.day
