@@ -1,0 +1,1634 @@
+{
+    "0900": {
+        "deal_price": 11235.45, 
+        "high_price": 11243.59, 
+        "low_price": 11228.95, 
+        "number": 5621552720
+    }, 
+    "0901": {
+        "deal_price": 11234.23, 
+        "high_price": 11236.45, 
+        "low_price": 11229.89, 
+        "number": 2154511100
+    }, 
+    "0902": {
+        "deal_price": 11231.09, 
+        "high_price": 11240.99, 
+        "low_price": 11231.05, 
+        "number": 2288109360
+    }, 
+    "0903": {
+        "deal_price": 11219.3, 
+        "high_price": 11231.14, 
+        "low_price": 11219.3, 
+        "number": 2190623520
+    }, 
+    "0904": {
+        "deal_price": 11220.82, 
+        "high_price": 11222.1, 
+        "low_price": 11218.95, 
+        "number": 1644679050
+    }, 
+    "0905": {
+        "deal_price": 11216.71, 
+        "high_price": 11223.95, 
+        "low_price": 11215.79, 
+        "number": 1625490260
+    }, 
+    "0906": {
+        "deal_price": 11215.55, 
+        "high_price": 11220.8, 
+        "low_price": 11211.88, 
+        "number": 1610640630
+    }, 
+    "0907": {
+        "deal_price": 11217.22, 
+        "high_price": 11218.5, 
+        "low_price": 11211.53, 
+        "number": 1413348530
+    }, 
+    "0908": {
+        "deal_price": 11209.41, 
+        "high_price": 11217.89, 
+        "low_price": 11209.41, 
+        "number": 1383102030
+    }, 
+    "0909": {
+        "deal_price": 11207.19, 
+        "high_price": 11214.41, 
+        "low_price": 11207.19, 
+        "number": 1172120310
+    }, 
+    "0910": {
+        "deal_price": 11212.75, 
+        "high_price": 11215.64, 
+        "low_price": 11207.88, 
+        "number": 1242246520
+    }, 
+    "0911": {
+        "deal_price": 11209.42, 
+        "high_price": 11214.45, 
+        "low_price": 11208.59, 
+        "number": 1367911040
+    }, 
+    "0912": {
+        "deal_price": 11208.42, 
+        "high_price": 11211.39, 
+        "low_price": 11208.42, 
+        "number": 1400813660
+    }, 
+    "0913": {
+        "deal_price": 11214.97, 
+        "high_price": 11214.97, 
+        "low_price": 11209.13, 
+        "number": 1146774130
+    }, 
+    "0914": {
+        "deal_price": 11215.45, 
+        "high_price": 11217.55, 
+        "low_price": 11210.51, 
+        "number": 1217113870
+    }, 
+    "0915": {
+        "deal_price": 11214.35, 
+        "high_price": 11219.96, 
+        "low_price": 11211.85, 
+        "number": 1162630000
+    }, 
+    "0916": {
+        "deal_price": 11217.47, 
+        "high_price": 11217.47, 
+        "low_price": 11212.15, 
+        "number": 1284092660
+    }, 
+    "0917": {
+        "deal_price": 11216.76, 
+        "high_price": 11218.24, 
+        "low_price": 11215.1, 
+        "number": 1050016650
+    }, 
+    "0918": {
+        "deal_price": 11215.48, 
+        "high_price": 11220.72, 
+        "low_price": 11212.93, 
+        "number": 1319275730
+    }, 
+    "0919": {
+        "deal_price": 11218.71, 
+        "high_price": 11219.14, 
+        "low_price": 11213.15, 
+        "number": 1051201640
+    }, 
+    "0920": {
+        "deal_price": 11220.53, 
+        "high_price": 11220.92, 
+        "low_price": 11214.82, 
+        "number": 1041936590
+    }, 
+    "0921": {
+        "deal_price": 11224.91, 
+        "high_price": 11225.52, 
+        "low_price": 11217.43, 
+        "number": 1363175980
+    }, 
+    "0922": {
+        "deal_price": 11221.53, 
+        "high_price": 11225.5, 
+        "low_price": 11217.0, 
+        "number": 1070318250
+    }, 
+    "0923": {
+        "deal_price": 11215.39, 
+        "high_price": 11222.63, 
+        "low_price": 11215.39, 
+        "number": 959892440
+    }, 
+    "0924": {
+        "deal_price": 11210.05, 
+        "high_price": 11221.5, 
+        "low_price": 11208.25, 
+        "number": 1138714000
+    }, 
+    "0925": {
+        "deal_price": 11211.0, 
+        "high_price": 11215.34, 
+        "low_price": 11209.13, 
+        "number": 812632090
+    }, 
+    "0926": {
+        "deal_price": 11205.77, 
+        "high_price": 11215.38, 
+        "low_price": 11205.6, 
+        "number": 853453180
+    }, 
+    "0927": {
+        "deal_price": 11201.35, 
+        "high_price": 11208.22, 
+        "low_price": 11201.35, 
+        "number": 859245260
+    }, 
+    "0928": {
+        "deal_price": 11204.48, 
+        "high_price": 11208.01, 
+        "low_price": 11201.02, 
+        "number": 862703040
+    }, 
+    "0929": {
+        "deal_price": 11200.61, 
+        "high_price": 11207.51, 
+        "low_price": 11200.61, 
+        "number": 789940530
+    }, 
+    "0930": {
+        "deal_price": 11202.72, 
+        "high_price": 11207.53, 
+        "low_price": 11198.49, 
+        "number": 747573390
+    }, 
+    "0931": {
+        "deal_price": 11208.85, 
+        "high_price": 11211.53, 
+        "low_price": 11202.53, 
+        "number": 882917270
+    }, 
+    "0932": {
+        "deal_price": 11210.71, 
+        "high_price": 11210.71, 
+        "low_price": 11207.28, 
+        "number": 667147990
+    }, 
+    "0933": {
+        "deal_price": 11216.03, 
+        "high_price": 11216.03, 
+        "low_price": 11209.0, 
+        "number": 1045698190
+    }, 
+    "0934": {
+        "deal_price": 11209.53, 
+        "high_price": 11215.45, 
+        "low_price": 11209.01, 
+        "number": 707750630
+    }, 
+    "0935": {
+        "deal_price": 11209.78, 
+        "high_price": 11216.88, 
+        "low_price": 11209.78, 
+        "number": 658119950
+    }, 
+    "0936": {
+        "deal_price": 11210.77, 
+        "high_price": 11215.23, 
+        "low_price": 11209.45, 
+        "number": 597195670
+    }, 
+    "0937": {
+        "deal_price": 11211.77, 
+        "high_price": 11215.85, 
+        "low_price": 11210.94, 
+        "number": 685954870
+    }, 
+    "0938": {
+        "deal_price": 11211.31, 
+        "high_price": 11216.27, 
+        "low_price": 11210.28, 
+        "number": 610919520
+    }, 
+    "0939": {
+        "deal_price": 11217.47, 
+        "high_price": 11218.2, 
+        "low_price": 11211.07, 
+        "number": 568046520
+    }, 
+    "0940": {
+        "deal_price": 11211.56, 
+        "high_price": 11217.65, 
+        "low_price": 11210.91, 
+        "number": 620856990
+    }, 
+    "0941": {
+        "deal_price": 11218.37, 
+        "high_price": 11219.18, 
+        "low_price": 11212.1, 
+        "number": 490776710
+    }, 
+    "0942": {
+        "deal_price": 11213.12, 
+        "high_price": 11219.33, 
+        "low_price": 11212.97, 
+        "number": 748482380
+    }, 
+    "0943": {
+        "deal_price": 11210.64, 
+        "high_price": 11217.59, 
+        "low_price": 11209.71, 
+        "number": 685485520
+    }, 
+    "0944": {
+        "deal_price": 11209.86, 
+        "high_price": 11213.03, 
+        "low_price": 11204.29, 
+        "number": 643734040
+    }, 
+    "0945": {
+        "deal_price": 11206.47, 
+        "high_price": 11211.06, 
+        "low_price": 11205.83, 
+        "number": 576821450
+    }, 
+    "0946": {
+        "deal_price": 11205.41, 
+        "high_price": 11210.93, 
+        "low_price": 11203.92, 
+        "number": 528654900
+    }, 
+    "0947": {
+        "deal_price": 11203.3, 
+        "high_price": 11207.53, 
+        "low_price": 11202.65, 
+        "number": 594996170
+    }, 
+    "0948": {
+        "deal_price": 11201.77, 
+        "high_price": 11208.58, 
+        "low_price": 11200.93, 
+        "number": 661441450
+    }, 
+    "0949": {
+        "deal_price": 11200.5, 
+        "high_price": 11202.46, 
+        "low_price": 11199.87, 
+        "number": 510673560
+    }, 
+    "0950": {
+        "deal_price": 11200.91, 
+        "high_price": 11206.61, 
+        "low_price": 11199.45, 
+        "number": 537782370
+    }, 
+    "0951": {
+        "deal_price": 11201.31, 
+        "high_price": 11206.05, 
+        "low_price": 11198.77, 
+        "number": 529251570
+    }, 
+    "0952": {
+        "deal_price": 11204.19, 
+        "high_price": 11204.19, 
+        "low_price": 11197.81, 
+        "number": 727535120
+    }, 
+    "0953": {
+        "deal_price": 11204.5, 
+        "high_price": 11205.27, 
+        "low_price": 11199.28, 
+        "number": 465044110
+    }, 
+    "0954": {
+        "deal_price": 11199.76, 
+        "high_price": 11204.88, 
+        "low_price": 11198.96, 
+        "number": 495975270
+    }, 
+    "0955": {
+        "deal_price": 11200.07, 
+        "high_price": 11203.8, 
+        "low_price": 11199.68, 
+        "number": 510782950
+    }, 
+    "0956": {
+        "deal_price": 11196.96, 
+        "high_price": 11203.17, 
+        "low_price": 11196.82, 
+        "number": 477091360
+    }, 
+    "0957": {
+        "deal_price": 11193.89, 
+        "high_price": 11199.05, 
+        "low_price": 11193.83, 
+        "number": 586932240
+    }, 
+    "0958": {
+        "deal_price": 11193.59, 
+        "high_price": 11197.01, 
+        "low_price": 11192.93, 
+        "number": 535684120
+    }, 
+    "0959": {
+        "deal_price": 11188.45, 
+        "high_price": 11193.71, 
+        "low_price": 11187.39, 
+        "number": 802169580
+    }, 
+    "1000": {
+        "deal_price": 11187.54, 
+        "high_price": 11190.36, 
+        "low_price": 11185.82, 
+        "number": 941175080
+    }, 
+    "1001": {
+        "deal_price": 11188.41, 
+        "high_price": 11190.02, 
+        "low_price": 11187.6, 
+        "number": 556557520
+    }, 
+    "1002": {
+        "deal_price": 11189.13, 
+        "high_price": 11191.24, 
+        "low_price": 11185.92, 
+        "number": 636261900
+    }, 
+    "1003": {
+        "deal_price": 11181.73, 
+        "high_price": 11189.63, 
+        "low_price": 11181.2, 
+        "number": 1001208520
+    }, 
+    "1004": {
+        "deal_price": 11183.76, 
+        "high_price": 11187.16, 
+        "low_price": 11183.74, 
+        "number": 490070850
+    }, 
+    "1005": {
+        "deal_price": 11183.91, 
+        "high_price": 11188.4, 
+        "low_price": 11180.59, 
+        "number": 586829095
+    }, 
+    "1006": {
+        "deal_price": 11185.84, 
+        "high_price": 11186.95, 
+        "low_price": 11182.67, 
+        "number": 441948540
+    }, 
+    "1007": {
+        "deal_price": 11183.74, 
+        "high_price": 11189.5, 
+        "low_price": 11182.79, 
+        "number": 497835690
+    }, 
+    "1008": {
+        "deal_price": 11183.78, 
+        "high_price": 11190.23, 
+        "low_price": 11183.78, 
+        "number": 422166110
+    }, 
+    "1009": {
+        "deal_price": 11181.89, 
+        "high_price": 11187.61, 
+        "low_price": 11181.13, 
+        "number": 505864130
+    }, 
+    "1010": {
+        "deal_price": 11186.16, 
+        "high_price": 11189.06, 
+        "low_price": 11182.41, 
+        "number": 619236500
+    }, 
+    "1011": {
+        "deal_price": 11180.54, 
+        "high_price": 11183.46, 
+        "low_price": 11174.8, 
+        "number": 432595570
+    }, 
+    "1012": {
+        "deal_price": 11173.2, 
+        "high_price": 11180.49, 
+        "low_price": 11173.2, 
+        "number": 577574530
+    }, 
+    "1013": {
+        "deal_price": 11178.68, 
+        "high_price": 11178.7, 
+        "low_price": 11170.89, 
+        "number": 522779140
+    }, 
+    "1014": {
+        "deal_price": 11182.67, 
+        "high_price": 11182.67, 
+        "low_price": 11173.02, 
+        "number": 414108250
+    }, 
+    "1015": {
+        "deal_price": 11175.54, 
+        "high_price": 11182.04, 
+        "low_price": 11174.87, 
+        "number": 446606940
+    }, 
+    "1016": {
+        "deal_price": 11178.24, 
+        "high_price": 11178.35, 
+        "low_price": 11174.14, 
+        "number": 446811440
+    }, 
+    "1017": {
+        "deal_price": 11175.57, 
+        "high_price": 11180.75, 
+        "low_price": 11173.93, 
+        "number": 405467150
+    }, 
+    "1018": {
+        "deal_price": 11183.45, 
+        "high_price": 11184.58, 
+        "low_price": 11178.67, 
+        "number": 572321150
+    }, 
+    "1019": {
+        "deal_price": 11189.74, 
+        "high_price": 11189.91, 
+        "low_price": 11184.12, 
+        "number": 414815250
+    }, 
+    "1020": {
+        "deal_price": 11189.59, 
+        "high_price": 11189.97, 
+        "low_price": 11186.71, 
+        "number": 425949750
+    }, 
+    "1021": {
+        "deal_price": 11190.85, 
+        "high_price": 11192.16, 
+        "low_price": 11185.47, 
+        "number": 596323490
+    }, 
+    "1022": {
+        "deal_price": 11189.54, 
+        "high_price": 11191.03, 
+        "low_price": 11186.26, 
+        "number": 455926370
+    }, 
+    "1023": {
+        "deal_price": 11188.36, 
+        "high_price": 11191.07, 
+        "low_price": 11185.93, 
+        "number": 948763860
+    }, 
+    "1024": {
+        "deal_price": 11194.21, 
+        "high_price": 11194.21, 
+        "low_price": 11188.3, 
+        "number": 502846490
+    }, 
+    "1025": {
+        "deal_price": 11196.21, 
+        "high_price": 11198.13, 
+        "low_price": 11188.67, 
+        "number": 580462800
+    }, 
+    "1026": {
+        "deal_price": 11197.11, 
+        "high_price": 11199.68, 
+        "low_price": 11190.74, 
+        "number": 629191620
+    }, 
+    "1027": {
+        "deal_price": 11194.66, 
+        "high_price": 11199.15, 
+        "low_price": 11190.87, 
+        "number": 581959960
+    }, 
+    "1028": {
+        "deal_price": 11196.1, 
+        "high_price": 11196.1, 
+        "low_price": 11189.18, 
+        "number": 453049280
+    }, 
+    "1029": {
+        "deal_price": 11196.71, 
+        "high_price": 11196.71, 
+        "low_price": 11189.83, 
+        "number": 420716980
+    }, 
+    "1030": {
+        "deal_price": 11188.62, 
+        "high_price": 11192.9, 
+        "low_price": 11188.3, 
+        "number": 486339630
+    }, 
+    "1031": {
+        "deal_price": 11189.76, 
+        "high_price": 11193.41, 
+        "low_price": 11186.49, 
+        "number": 359103300
+    }, 
+    "1032": {
+        "deal_price": 11189.72, 
+        "high_price": 11195.7, 
+        "low_price": 11189.05, 
+        "number": 404538750
+    }, 
+    "1033": {
+        "deal_price": 11190.86, 
+        "high_price": 11195.14, 
+        "low_price": 11187.89, 
+        "number": 592019620
+    }, 
+    "1034": {
+        "deal_price": 11191.94, 
+        "high_price": 11194.03, 
+        "low_price": 11188.54, 
+        "number": 412045300
+    }, 
+    "1035": {
+        "deal_price": 11190.09, 
+        "high_price": 11196.39, 
+        "low_price": 11189.23, 
+        "number": 420579180
+    }, 
+    "1036": {
+        "deal_price": 11189.43, 
+        "high_price": 11197.05, 
+        "low_price": 11188.3, 
+        "number": 510299640
+    }, 
+    "1037": {
+        "deal_price": 11188.8, 
+        "high_price": 11190.15, 
+        "low_price": 11184.77, 
+        "number": 591137690
+    }, 
+    "1038": {
+        "deal_price": 11181.98, 
+        "high_price": 11190.08, 
+        "low_price": 11181.98, 
+        "number": 403615770
+    }, 
+    "1039": {
+        "deal_price": 11187.16, 
+        "high_price": 11188.8, 
+        "low_price": 11182.35, 
+        "number": 396759660
+    }, 
+    "1040": {
+        "deal_price": 11186.22, 
+        "high_price": 11188.9, 
+        "low_price": 11185.11, 
+        "number": 597988010
+    }, 
+    "1041": {
+        "deal_price": 11192.01, 
+        "high_price": 11192.01, 
+        "low_price": 11184.67, 
+        "number": 333028070
+    }, 
+    "1042": {
+        "deal_price": 11189.77, 
+        "high_price": 11193.33, 
+        "low_price": 11187.88, 
+        "number": 422460430
+    }, 
+    "1043": {
+        "deal_price": 11190.53, 
+        "high_price": 11193.09, 
+        "low_price": 11185.43, 
+        "number": 330157760
+    }, 
+    "1044": {
+        "deal_price": 11188.26, 
+        "high_price": 11191.47, 
+        "low_price": 11186.8, 
+        "number": 347723260
+    }, 
+    "1045": {
+        "deal_price": 11190.73, 
+        "high_price": 11193.78, 
+        "low_price": 11186.08, 
+        "number": 360904870
+    }, 
+    "1046": {
+        "deal_price": 11186.61, 
+        "high_price": 11196.09, 
+        "low_price": 11185.76, 
+        "number": 403797790
+    }, 
+    "1047": {
+        "deal_price": 11185.9, 
+        "high_price": 11192.05, 
+        "low_price": 11184.53, 
+        "number": 305901780
+    }, 
+    "1048": {
+        "deal_price": 11186.2, 
+        "high_price": 11192.67, 
+        "low_price": 11184.93, 
+        "number": 317357160
+    }, 
+    "1049": {
+        "deal_price": 11187.6, 
+        "high_price": 11192.94, 
+        "low_price": 11186.05, 
+        "number": 324003980
+    }, 
+    "1050": {
+        "deal_price": 11191.42, 
+        "high_price": 11192.83, 
+        "low_price": 11186.24, 
+        "number": 443851260
+    }, 
+    "1051": {
+        "deal_price": 11187.49, 
+        "high_price": 11192.51, 
+        "low_price": 11187.23, 
+        "number": 418692550
+    }, 
+    "1052": {
+        "deal_price": 11187.59, 
+        "high_price": 11192.69, 
+        "low_price": 11184.99, 
+        "number": 363938790
+    }, 
+    "1053": {
+        "deal_price": 11184.68, 
+        "high_price": 11191.89, 
+        "low_price": 11183.45, 
+        "number": 399657170
+    }, 
+    "1054": {
+        "deal_price": 11183.74, 
+        "high_price": 11188.77, 
+        "low_price": 11182.2, 
+        "number": 438347900
+    }, 
+    "1055": {
+        "deal_price": 11185.51, 
+        "high_price": 11186.91, 
+        "low_price": 11181.98, 
+        "number": 430208600
+    }, 
+    "1056": {
+        "deal_price": 11185.44, 
+        "high_price": 11185.44, 
+        "low_price": 11177.05, 
+        "number": 568190710
+    }, 
+    "1057": {
+        "deal_price": 11184.35, 
+        "high_price": 11185.35, 
+        "low_price": 11179.25, 
+        "number": 364776500
+    }, 
+    "1058": {
+        "deal_price": 11179.33, 
+        "high_price": 11186.65, 
+        "low_price": 11177.62, 
+        "number": 350741080
+    }, 
+    "1059": {
+        "deal_price": 11176.05, 
+        "high_price": 11181.31, 
+        "low_price": 11176.05, 
+        "number": 342185620
+    }, 
+    "1100": {
+        "deal_price": 11178.52, 
+        "high_price": 11183.88, 
+        "low_price": 11176.55, 
+        "number": 472520500
+    }, 
+    "1101": {
+        "deal_price": 11183.74, 
+        "high_price": 11183.74, 
+        "low_price": 11178.24, 
+        "number": 249435230
+    }, 
+    "1102": {
+        "deal_price": 11184.29, 
+        "high_price": 11185.37, 
+        "low_price": 11178.49, 
+        "number": 335990560
+    }, 
+    "1103": {
+        "deal_price": 11177.31, 
+        "high_price": 11178.36, 
+        "low_price": 11175.65, 
+        "number": 297333470
+    }, 
+    "1104": {
+        "deal_price": 11176.62, 
+        "high_price": 11181.64, 
+        "low_price": 11176.24, 
+        "number": 290906460
+    }, 
+    "1105": {
+        "deal_price": 11181.07, 
+        "high_price": 11184.96, 
+        "low_price": 11179.02, 
+        "number": 272411260
+    }, 
+    "1106": {
+        "deal_price": 11178.25, 
+        "high_price": 11181.57, 
+        "low_price": 11176.85, 
+        "number": 238261570
+    }, 
+    "1107": {
+        "deal_price": 11180.16, 
+        "high_price": 11180.94, 
+        "low_price": 11176.48, 
+        "number": 386353290
+    }, 
+    "1108": {
+        "deal_price": 11180.71, 
+        "high_price": 11181.85, 
+        "low_price": 11176.19, 
+        "number": 327133320
+    }, 
+    "1109": {
+        "deal_price": 11177.9, 
+        "high_price": 11183.94, 
+        "low_price": 11174.98, 
+        "number": 355819160
+    }, 
+    "1110": {
+        "deal_price": 11170.67, 
+        "high_price": 11178.45, 
+        "low_price": 11170.67, 
+        "number": 439291350
+    }, 
+    "1111": {
+        "deal_price": 11175.19, 
+        "high_price": 11175.71, 
+        "low_price": 11168.41, 
+        "number": 446925780
+    }, 
+    "1112": {
+        "deal_price": 11175.14, 
+        "high_price": 11176.14, 
+        "low_price": 11168.8, 
+        "number": 537325480
+    }, 
+    "1113": {
+        "deal_price": 11173.37, 
+        "high_price": 11174.06, 
+        "low_price": 11167.12, 
+        "number": 610672270
+    }, 
+    "1114": {
+        "deal_price": 11168.28, 
+        "high_price": 11173.88, 
+        "low_price": 11167.18, 
+        "number": 508000940
+    }, 
+    "1115": {
+        "deal_price": 11170.19, 
+        "high_price": 11171.6, 
+        "low_price": 11163.96, 
+        "number": 739323620
+    }, 
+    "1116": {
+        "deal_price": 11165.77, 
+        "high_price": 11167.91, 
+        "low_price": 11160.09, 
+        "number": 676419160
+    }, 
+    "1117": {
+        "deal_price": 11164.38, 
+        "high_price": 11165.43, 
+        "low_price": 11160.54, 
+        "number": 628318770
+    }, 
+    "1118": {
+        "deal_price": 11164.96, 
+        "high_price": 11164.96, 
+        "low_price": 11156.94, 
+        "number": 640662610
+    }, 
+    "1119": {
+        "deal_price": 11161.1, 
+        "high_price": 11161.75, 
+        "low_price": 11155.71, 
+        "number": 432515590
+    }, 
+    "1120": {
+        "deal_price": 11158.02, 
+        "high_price": 11160.97, 
+        "low_price": 11155.73, 
+        "number": 564540610
+    }, 
+    "1121": {
+        "deal_price": 11155.37, 
+        "high_price": 11161.33, 
+        "low_price": 11155.37, 
+        "number": 431876130
+    }, 
+    "1122": {
+        "deal_price": 11162.67, 
+        "high_price": 11162.86, 
+        "low_price": 11155.73, 
+        "number": 342986700
+    }, 
+    "1123": {
+        "deal_price": 11160.56, 
+        "high_price": 11166.22, 
+        "low_price": 11157.71, 
+        "number": 457111010
+    }, 
+    "1124": {
+        "deal_price": 11161.49, 
+        "high_price": 11164.59, 
+        "low_price": 11159.35, 
+        "number": 345648710
+    }, 
+    "1125": {
+        "deal_price": 11160.15, 
+        "high_price": 11165.0, 
+        "low_price": 11158.69, 
+        "number": 363727810
+    }, 
+    "1126": {
+        "deal_price": 11160.26, 
+        "high_price": 11165.9, 
+        "low_price": 11158.74, 
+        "number": 271363870
+    }, 
+    "1127": {
+        "deal_price": 11162.9, 
+        "high_price": 11163.35, 
+        "low_price": 11157.71, 
+        "number": 305124970
+    }, 
+    "1128": {
+        "deal_price": 11160.61, 
+        "high_price": 11162.01, 
+        "low_price": 11159.45, 
+        "number": 288773130
+    }, 
+    "1129": {
+        "deal_price": 11158.75, 
+        "high_price": 11166.52, 
+        "low_price": 11158.75, 
+        "number": 413396950
+    }, 
+    "1130": {
+        "deal_price": 11163.28, 
+        "high_price": 11167.97, 
+        "low_price": 11159.14, 
+        "number": 356551920
+    }, 
+    "1131": {
+        "deal_price": 11162.65, 
+        "high_price": 11165.59, 
+        "low_price": 11160.77, 
+        "number": 345387470
+    }, 
+    "1132": {
+        "deal_price": 11160.9, 
+        "high_price": 11163.64, 
+        "low_price": 11158.71, 
+        "number": 360289530
+    }, 
+    "1133": {
+        "deal_price": 11161.34, 
+        "high_price": 11165.14, 
+        "low_price": 11157.89, 
+        "number": 292557360
+    }, 
+    "1134": {
+        "deal_price": 11161.53, 
+        "high_price": 11165.05, 
+        "low_price": 11159.05, 
+        "number": 282361940
+    }, 
+    "1135": {
+        "deal_price": 11156.82, 
+        "high_price": 11162.8, 
+        "low_price": 11155.7, 
+        "number": 287177360
+    }, 
+    "1136": {
+        "deal_price": 11157.79, 
+        "high_price": 11161.56, 
+        "low_price": 11154.26, 
+        "number": 259884670
+    }, 
+    "1137": {
+        "deal_price": 11161.69, 
+        "high_price": 11162.32, 
+        "low_price": 11156.23, 
+        "number": 298816080
+    }, 
+    "1138": {
+        "deal_price": 11158.28, 
+        "high_price": 11165.19, 
+        "low_price": 11155.22, 
+        "number": 288527260
+    }, 
+    "1139": {
+        "deal_price": 11158.78, 
+        "high_price": 11164.38, 
+        "low_price": 11157.87, 
+        "number": 286551820
+    }, 
+    "1140": {
+        "deal_price": 11161.08, 
+        "high_price": 11164.33, 
+        "low_price": 11158.68, 
+        "number": 364034770
+    }, 
+    "1141": {
+        "deal_price": 11166.3, 
+        "high_price": 11166.3, 
+        "low_price": 11159.19, 
+        "number": 369352820
+    }, 
+    "1142": {
+        "deal_price": 11159.88, 
+        "high_price": 11166.8, 
+        "low_price": 11159.88, 
+        "number": 295770520
+    }, 
+    "1143": {
+        "deal_price": 11160.01, 
+        "high_price": 11165.54, 
+        "low_price": 11158.0, 
+        "number": 297603900
+    }, 
+    "1144": {
+        "deal_price": 11164.59, 
+        "high_price": 11166.04, 
+        "low_price": 11160.16, 
+        "number": 274471030
+    }, 
+    "1145": {
+        "deal_price": 11161.58, 
+        "high_price": 11167.04, 
+        "low_price": 11160.01, 
+        "number": 323204150
+    }, 
+    "1146": {
+        "deal_price": 11164.69, 
+        "high_price": 11167.25, 
+        "low_price": 11160.93, 
+        "number": 274816130
+    }, 
+    "1147": {
+        "deal_price": 11166.69, 
+        "high_price": 11167.34, 
+        "low_price": 11160.41, 
+        "number": 255552190
+    }, 
+    "1148": {
+        "deal_price": 11160.21, 
+        "high_price": 11166.55, 
+        "low_price": 11159.63, 
+        "number": 290968500
+    }, 
+    "1149": {
+        "deal_price": 11167.14, 
+        "high_price": 11167.15, 
+        "low_price": 11164.13, 
+        "number": 384451950
+    }, 
+    "1150": {
+        "deal_price": 11161.92, 
+        "high_price": 11167.26, 
+        "low_price": 11159.98, 
+        "number": 478825650
+    }, 
+    "1151": {
+        "deal_price": 11163.49, 
+        "high_price": 11168.35, 
+        "low_price": 11160.37, 
+        "number": 317911110
+    }, 
+    "1152": {
+        "deal_price": 11168.88, 
+        "high_price": 11169.81, 
+        "low_price": 11166.13, 
+        "number": 303455100
+    }, 
+    "1153": {
+        "deal_price": 11164.01, 
+        "high_price": 11168.54, 
+        "low_price": 11162.94, 
+        "number": 271738170
+    }, 
+    "1154": {
+        "deal_price": 11167.26, 
+        "high_price": 11167.93, 
+        "low_price": 11161.58, 
+        "number": 276666860
+    }, 
+    "1155": {
+        "deal_price": 11163.41, 
+        "high_price": 11169.49, 
+        "low_price": 11161.53, 
+        "number": 236822340
+    }, 
+    "1156": {
+        "deal_price": 11166.14, 
+        "high_price": 11167.63, 
+        "low_price": 11160.13, 
+        "number": 324392570
+    }, 
+    "1157": {
+        "deal_price": 11163.43, 
+        "high_price": 11168.9, 
+        "low_price": 11160.69, 
+        "number": 253985570
+    }, 
+    "1158": {
+        "deal_price": 11164.16, 
+        "high_price": 11168.14, 
+        "low_price": 11161.62, 
+        "number": 277859250
+    }, 
+    "1159": {
+        "deal_price": 11158.29, 
+        "high_price": 11166.25, 
+        "low_price": 11158.29, 
+        "number": 250813990
+    }, 
+    "1200": {
+        "deal_price": 11165.8, 
+        "high_price": 11166.0, 
+        "low_price": 11160.54, 
+        "number": 423113250
+    }, 
+    "1201": {
+        "deal_price": 11165.6, 
+        "high_price": 11166.42, 
+        "low_price": 11160.68, 
+        "number": 235227650
+    }, 
+    "1202": {
+        "deal_price": 11165.27, 
+        "high_price": 11166.34, 
+        "low_price": 11160.31, 
+        "number": 215454410
+    }, 
+    "1203": {
+        "deal_price": 11168.68, 
+        "high_price": 11168.68, 
+        "low_price": 11161.25, 
+        "number": 268620270
+    }, 
+    "1204": {
+        "deal_price": 11169.41, 
+        "high_price": 11169.64, 
+        "low_price": 11160.05, 
+        "number": 279578470
+    }, 
+    "1205": {
+        "deal_price": 11162.65, 
+        "high_price": 11169.95, 
+        "low_price": 11162.65, 
+        "number": 349797520
+    }, 
+    "1206": {
+        "deal_price": 11167.95, 
+        "high_price": 11170.98, 
+        "low_price": 11165.38, 
+        "number": 270060810
+    }, 
+    "1207": {
+        "deal_price": 11166.84, 
+        "high_price": 11169.09, 
+        "low_price": 11164.07, 
+        "number": 269989740
+    }, 
+    "1208": {
+        "deal_price": 11165.5, 
+        "high_price": 11166.79, 
+        "low_price": 11160.68, 
+        "number": 328151210
+    }, 
+    "1209": {
+        "deal_price": 11161.61, 
+        "high_price": 11167.13, 
+        "low_price": 11159.87, 
+        "number": 355893130
+    }, 
+    "1210": {
+        "deal_price": 11163.62, 
+        "high_price": 11165.3, 
+        "low_price": 11159.2, 
+        "number": 276354720
+    }, 
+    "1211": {
+        "deal_price": 11166.31, 
+        "high_price": 11166.31, 
+        "low_price": 11161.73, 
+        "number": 296868560
+    }, 
+    "1212": {
+        "deal_price": 11164.34, 
+        "high_price": 11165.11, 
+        "low_price": 11158.15, 
+        "number": 281333710
+    }, 
+    "1213": {
+        "deal_price": 11157.54, 
+        "high_price": 11163.14, 
+        "low_price": 11157.48, 
+        "number": 280693820
+    }, 
+    "1214": {
+        "deal_price": 11162.5, 
+        "high_price": 11163.95, 
+        "low_price": 11157.89, 
+        "number": 258592330
+    }, 
+    "1215": {
+        "deal_price": 11162.52, 
+        "high_price": 11165.43, 
+        "low_price": 11157.12, 
+        "number": 369757400
+    }, 
+    "1216": {
+        "deal_price": 11162.33, 
+        "high_price": 11163.83, 
+        "low_price": 11161.38, 
+        "number": 387129290
+    }, 
+    "1217": {
+        "deal_price": 11160.85, 
+        "high_price": 11163.54, 
+        "low_price": 11160.28, 
+        "number": 316134960
+    }, 
+    "1218": {
+        "deal_price": 11165.22, 
+        "high_price": 11165.81, 
+        "low_price": 11160.7, 
+        "number": 400072700
+    }, 
+    "1219": {
+        "deal_price": 11166.32, 
+        "high_price": 11167.01, 
+        "low_price": 11163.49, 
+        "number": 414328130
+    }, 
+    "1220": {
+        "deal_price": 11166.99, 
+        "high_price": 11168.82, 
+        "low_price": 11164.05, 
+        "number": 443057160
+    }, 
+    "1221": {
+        "deal_price": 11164.31, 
+        "high_price": 11167.99, 
+        "low_price": 11164.31, 
+        "number": 275168830
+    }, 
+    "1222": {
+        "deal_price": 11167.36, 
+        "high_price": 11167.36, 
+        "low_price": 11164.04, 
+        "number": 312890860
+    }, 
+    "1223": {
+        "deal_price": 11166.32, 
+        "high_price": 11166.84, 
+        "low_price": 11160.22, 
+        "number": 248760140
+    }, 
+    "1224": {
+        "deal_price": 11164.4, 
+        "high_price": 11166.76, 
+        "low_price": 11161.68, 
+        "number": 249700530
+    }, 
+    "1225": {
+        "deal_price": 11165.54, 
+        "high_price": 11167.66, 
+        "low_price": 11159.38, 
+        "number": 214615730
+    }, 
+    "1226": {
+        "deal_price": 11164.92, 
+        "high_price": 11166.62, 
+        "low_price": 11161.28, 
+        "number": 222528730
+    }, 
+    "1227": {
+        "deal_price": 11164.57, 
+        "high_price": 11165.79, 
+        "low_price": 11161.38, 
+        "number": 253113060
+    }, 
+    "1228": {
+        "deal_price": 11164.96, 
+        "high_price": 11165.87, 
+        "low_price": 11158.28, 
+        "number": 336102810
+    }, 
+    "1229": {
+        "deal_price": 11161.84, 
+        "high_price": 11163.96, 
+        "low_price": 11161.42, 
+        "number": 291846770
+    }, 
+    "1230": {
+        "deal_price": 11160.66, 
+        "high_price": 11163.77, 
+        "low_price": 11156.33, 
+        "number": 407928920
+    }, 
+    "1231": {
+        "deal_price": 11162.29, 
+        "high_price": 11164.4, 
+        "low_price": 11161.3, 
+        "number": 342631660
+    }, 
+    "1232": {
+        "deal_price": 11157.0, 
+        "high_price": 11161.95, 
+        "low_price": 11156.15, 
+        "number": 594734600
+    }, 
+    "1233": {
+        "deal_price": 11160.24, 
+        "high_price": 11162.07, 
+        "low_price": 11156.5, 
+        "number": 453910350
+    }, 
+    "1234": {
+        "deal_price": 11154.53, 
+        "high_price": 11161.62, 
+        "low_price": 11153.3, 
+        "number": 335609590
+    }, 
+    "1235": {
+        "deal_price": 11159.69, 
+        "high_price": 11161.49, 
+        "low_price": 11153.52, 
+        "number": 357491690
+    }, 
+    "1236": {
+        "deal_price": 11155.75, 
+        "high_price": 11159.08, 
+        "low_price": 11153.82, 
+        "number": 355437220
+    }, 
+    "1237": {
+        "deal_price": 11158.48, 
+        "high_price": 11160.67, 
+        "low_price": 11155.38, 
+        "number": 413573990
+    }, 
+    "1238": {
+        "deal_price": 11152.5, 
+        "high_price": 11160.62, 
+        "low_price": 11152.5, 
+        "number": 546750330
+    }, 
+    "1239": {
+        "deal_price": 11157.15, 
+        "high_price": 11158.21, 
+        "low_price": 11153.29, 
+        "number": 345856140
+    }, 
+    "1240": {
+        "deal_price": 11157.72, 
+        "high_price": 11159.66, 
+        "low_price": 11153.53, 
+        "number": 407300350
+    }, 
+    "1241": {
+        "deal_price": 11154.06, 
+        "high_price": 11156.0, 
+        "low_price": 11149.33, 
+        "number": 336586490
+    }, 
+    "1242": {
+        "deal_price": 11156.64, 
+        "high_price": 11157.91, 
+        "low_price": 11150.14, 
+        "number": 362347170
+    }, 
+    "1243": {
+        "deal_price": 11156.77, 
+        "high_price": 11157.67, 
+        "low_price": 11151.41, 
+        "number": 400804520
+    }, 
+    "1244": {
+        "deal_price": 11153.22, 
+        "high_price": 11157.95, 
+        "low_price": 11150.88, 
+        "number": 376467680
+    }, 
+    "1245": {
+        "deal_price": 11157.21, 
+        "high_price": 11158.37, 
+        "low_price": 11150.11, 
+        "number": 313056720
+    }, 
+    "1246": {
+        "deal_price": 11150.58, 
+        "high_price": 11157.56, 
+        "low_price": 11149.26, 
+        "number": 450530160
+    }, 
+    "1247": {
+        "deal_price": 11151.1, 
+        "high_price": 11154.71, 
+        "low_price": 11149.83, 
+        "number": 580114810
+    }, 
+    "1248": {
+        "deal_price": 11153.72, 
+        "high_price": 11155.31, 
+        "low_price": 11148.03, 
+        "number": 345987040
+    }, 
+    "1249": {
+        "deal_price": 11153.28, 
+        "high_price": 11156.53, 
+        "low_price": 11151.75, 
+        "number": 376551040
+    }, 
+    "1250": {
+        "deal_price": 11154.14, 
+        "high_price": 11155.6, 
+        "low_price": 11148.36, 
+        "number": 444630140
+    }, 
+    "1251": {
+        "deal_price": 11156.06, 
+        "high_price": 11156.06, 
+        "low_price": 11147.88, 
+        "number": 429666560
+    }, 
+    "1252": {
+        "deal_price": 11148.61, 
+        "high_price": 11156.38, 
+        "low_price": 11148.01, 
+        "number": 334360660
+    }, 
+    "1253": {
+        "deal_price": 11155.47, 
+        "high_price": 11156.81, 
+        "low_price": 11149.56, 
+        "number": 404400700
+    }, 
+    "1254": {
+        "deal_price": 11155.71, 
+        "high_price": 11155.71, 
+        "low_price": 11149.53, 
+        "number": 354596010
+    }, 
+    "1255": {
+        "deal_price": 11145.63, 
+        "high_price": 11155.57, 
+        "low_price": 11145.63, 
+        "number": 264482470
+    }, 
+    "1256": {
+        "deal_price": 11153.44, 
+        "high_price": 11153.44, 
+        "low_price": 11147.42, 
+        "number": 309285880
+    }, 
+    "1257": {
+        "deal_price": 11151.8, 
+        "high_price": 11151.8, 
+        "low_price": 11145.6, 
+        "number": 414419160
+    }, 
+    "1258": {
+        "deal_price": 11146.62, 
+        "high_price": 11152.95, 
+        "low_price": 11146.5, 
+        "number": 407919020
+    }, 
+    "1259": {
+        "deal_price": 11147.71, 
+        "high_price": 11150.18, 
+        "low_price": 11143.44, 
+        "number": 480309320
+    }, 
+    "1300": {
+        "deal_price": 11148.23, 
+        "high_price": 11148.23, 
+        "low_price": 11143.17, 
+        "number": 509142160
+    }, 
+    "1301": {
+        "deal_price": 11148.66, 
+        "high_price": 11153.88, 
+        "low_price": 11142.64, 
+        "number": 474702190
+    }, 
+    "1302": {
+        "deal_price": 11150.14, 
+        "high_price": 11153.45, 
+        "low_price": 11145.74, 
+        "number": 475059440
+    }, 
+    "1303": {
+        "deal_price": 11154.16, 
+        "high_price": 11155.25, 
+        "low_price": 11148.9, 
+        "number": 489525180
+    }, 
+    "1304": {
+        "deal_price": 11154.24, 
+        "high_price": 11156.32, 
+        "low_price": 11150.42, 
+        "number": 513354370
+    }, 
+    "1305": {
+        "deal_price": 11153.65, 
+        "high_price": 11155.44, 
+        "low_price": 11147.8, 
+        "number": 689184100
+    }, 
+    "1306": {
+        "deal_price": 11149.49, 
+        "high_price": 11153.56, 
+        "low_price": 11143.71, 
+        "number": 789503020
+    }, 
+    "1307": {
+        "deal_price": 11147.93, 
+        "high_price": 11152.19, 
+        "low_price": 11145.13, 
+        "number": 569246270
+    }, 
+    "1308": {
+        "deal_price": 11149.31, 
+        "high_price": 11149.67, 
+        "low_price": 11146.44, 
+        "number": 556079640
+    }, 
+    "1309": {
+        "deal_price": 11151.76, 
+        "high_price": 11153.6, 
+        "low_price": 11145.99, 
+        "number": 555643850
+    }, 
+    "1310": {
+        "deal_price": 11144.02, 
+        "high_price": 11148.3, 
+        "low_price": 11142.49, 
+        "number": 573548530
+    }, 
+    "1311": {
+        "deal_price": 11143.1, 
+        "high_price": 11146.14, 
+        "low_price": 11141.1, 
+        "number": 553274040
+    }, 
+    "1312": {
+        "deal_price": 11142.72, 
+        "high_price": 11143.59, 
+        "low_price": 11140.65, 
+        "number": 657624420
+    }, 
+    "1313": {
+        "deal_price": 11136.59, 
+        "high_price": 11142.81, 
+        "low_price": 11133.84, 
+        "number": 618443940
+    }, 
+    "1314": {
+        "deal_price": 11135.55, 
+        "high_price": 11140.13, 
+        "low_price": 11132.33, 
+        "number": 596924290
+    }, 
+    "1315": {
+        "deal_price": 11138.14, 
+        "high_price": 11138.28, 
+        "low_price": 11131.56, 
+        "number": 818621010
+    }, 
+    "1316": {
+        "deal_price": 11133.27, 
+        "high_price": 11138.78, 
+        "low_price": 11129.7, 
+        "number": 693933100
+    }, 
+    "1317": {
+        "deal_price": 11134.25, 
+        "high_price": 11137.99, 
+        "low_price": 11129.81, 
+        "number": 647809280
+    }, 
+    "1318": {
+        "deal_price": 11129.52, 
+        "high_price": 11134.11, 
+        "low_price": 11128.18, 
+        "number": 732706440
+    }, 
+    "1319": {
+        "deal_price": 11131.26, 
+        "high_price": 11132.67, 
+        "low_price": 11126.76, 
+        "number": 884071630
+    }, 
+    "1320": {
+        "deal_price": 11133.59, 
+        "high_price": 11133.66, 
+        "low_price": 11125.91, 
+        "number": 925745200
+    }, 
+    "1321": {
+        "deal_price": 11130.02, 
+        "high_price": 11133.24, 
+        "low_price": 11122.98, 
+        "number": 634417790
+    }, 
+    "1322": {
+        "deal_price": 11123.27, 
+        "high_price": 11130.2, 
+        "low_price": 11123.27, 
+        "number": 804828510
+    }, 
+    "1323": {
+        "deal_price": 11128.23, 
+        "high_price": 11132.23, 
+        "low_price": 11124.74, 
+        "number": 867935150
+    }, 
+    "1324": {
+        "deal_price": 11143.34, 
+        "high_price": 11143.34, 
+        "low_price": 11127.49, 
+        "number": 1138645730
+    }, 
+    "1325": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 169326650
+    }, 
+    "1326": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 0
+    }, 
+    "1327": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 0
+    }, 
+    "1328": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 0
+    }, 
+    "1329": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 0
+    }, 
+    "1330": {
+        "deal_price": 11140.62, 
+        "high_price": 11140.62, 
+        "low_price": 11140.62, 
+        "number": 0
+    }, 
+    "1331": {
+        "deal_price": 11156.42, 
+        "high_price": 11156.42, 
+        "low_price": 11156.42, 
+        "number": 10221866610
+    }
+}

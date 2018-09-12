@@ -326,7 +326,55 @@ def stock_daily_parser(stock):
         
     return collections.OrderedDict(sorted(d.items(), key=lambda k: k))
 
+def get_TWA_stock_price(date, lock=None):
 
+    base_path = os.path.join('data', 'TWA')
+    if not os.path.exists(base_path):
+        os.mkdir(base_path)
+
+    if os.path.exists(os.path.join(base_path, date+'.json')):
+        return json_load(os.path.join(base_path, date+'.json'))
+
+    if lock: lock.acquire()
+
+    d = collections.OrderedDict()
+    ck, session = get_stock_ck()
+    h = {
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-CN;q=0.2',
+        'Connection': 'keep-alive',
+        'Cookie': 'AspSession=' + session.cookies[
+            'AspSession'] + '; ASP.NET_SessionId=cni5czv1xcyeecoptvk00voo; __asc=acbd4791165ce3c2d9a185f5bc4; _gid=GA1.2.461902859.1536763375',
+        'Host': 'www.cmoney.tw',
+        'Referer': 'https://www.cmoney.tw/notice/chart/stockchart.aspx?action=r&id=TWA00&view=1&date=%s'+date,
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.101 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest'}
+
+    data = {
+        'action': 'r',
+        'id': 'TWA00',
+        'date': date,
+        'ck': ck,
+        '_': '1533974045257'
+    }
+    res = session.get('https://www.cmoney.tw/notice/chart/stock-chart-service.ashx', headers=h, params=data)
+
+    for element in res.json()['DataPrice']:
+        time, deal_price, number, high_price, low_price = element
+        time_string = datetime.datetime.utcfromtimestamp(time / 1000.0).strftime('%H%M')
+
+        d[time_string] = {
+            'deal_price': deal_price,
+            'number': number,
+            'high_price': high_price,
+            'low_price': low_price
+        }
+
+    filename = os.path.join(base_path, date + '.json')
+    json_save(filename, d)
+
+    if lock: lock.release()
 
 def update_TWA_finance():
 

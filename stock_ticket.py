@@ -199,7 +199,7 @@ def execute(s):
 
     fn = os.path.join('build', s + '.csv')
     fp = open(fn, 'w')
-    header = ['no', 'stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick', \
+    header = ['no', 'stock', 'date', 'second', 'number', 'inout_ratio', 'main_ratio', 'buy_tick',
               'result_tick', 'interval', 'reason', 'buy_price', 'sell_price', 'K9', 'D9', 'DIF_MACD','diff']
     fp.write(','.join(header) + '\n')
     
@@ -220,6 +220,8 @@ def execute(s):
             money, win_count, lose_count, tie_count, escape_count = 1000000, 0, 0, 0, 0
 
             for other_date in ship.iterate_date(sim_start_date, sim_end_date):
+
+                other_date_TWA = tools.stock_price_utility.get_TWA_stock_price(other_date, lock)
 
                 # Filter the date that not safe
                 # reference: https://xstrader.net
@@ -259,8 +261,8 @@ def execute(s):
                 if other_date not in win_standard_dict or not win_standard_dict[other_date]:
                     continue
 
-                sim = StockSim(s, other_date, other_transaction, fp, \
-                               stock_finance[other_date], last_finance)
+                sim = StockSim(s, other_date, other_transaction, fp,
+                               stock_finance[other_date], last_finance, other_date_TWA)
 
                 money, wc, lc, tc, ec = sim.execute(current_number, money, win_standard, verbose=True)
 

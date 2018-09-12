@@ -13,7 +13,7 @@ class StockSim:
     WIN_STANDARD = 1
     LOSE_STANDARD = 2
 
-    def __init__(self, stock, date, transaction_list, output_file, finance, last_finance):
+    def __init__(self, stock, date, transaction_list, output_file, finance, last_finance, TWA):
         self.stock = stock
         self.cache = {}
         self.transaction_list = transaction_list
@@ -21,6 +21,7 @@ class StockSim:
         self.date = date
         self.finance = finance
         self.last_finance = last_finance
+        self.TWA = TWA
 
     def add_record(self, no, win_standard, buy_tick, result_tick, buy_price, sell_price, diff, reason):
 

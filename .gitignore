@@ -5,6 +5,7 @@
 build/
 release
 daily_update.log
+!data/TWA/*.json
 !trans_*
 !DJI.json
 
