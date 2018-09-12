@@ -207,7 +207,7 @@ class StockSim:
                 win_standard_valid = standard_test(tick, trace, win_standard, self.WIN_STANDARD)
                 lose_standard_valid = standard_test(tick, trace, win_standard, self.LOSE_STANDARD)
 
-                if win_standard_valid and not lose_standard_valid:
+                if win_standard_valid and not lose_standard_valid and data.sell > last_day_close_price:
 
                     cost_price = data.sell * self.tax_rate
                     money -= (cost_price * 1000)

@@ -179,7 +179,7 @@ def execute(s):
     print 'Start test %s' % s
     win_standard_dict = {}
     sim_start_date = '20180525'
-    sim_end_date = '20180715'
+    sim_end_date = '20180815'
     
     TWA = tools.stock_price_utility.json_load('data/TWA.json')
 
@@ -348,7 +348,7 @@ if __name__ == '__main__':
         
         if args.pll:
 
-            pool = Pool(3, initializer=init, initargs=(lock, queue, global_no))
+            pool = Pool(initializer=init, initargs=(lock, queue, global_no))
             if args.debug:
                 import tblib.pickling_support
                 tblib.pickling_support.install()
