@@ -117,7 +117,7 @@ class StockSim:
         if trace.keys()[-1] <= 130000:
             return money, win_count, lose_count, tie_count, escape_count
 
-        last_day_close_price = self.finance['ClosePr'] - self.finance['PriceDifference']
+        last_day_close_price = self.last_finance['ClosePr']
 
         for tick, data in trace.items():
 
