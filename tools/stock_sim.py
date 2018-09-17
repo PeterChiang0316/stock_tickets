@@ -145,10 +145,13 @@ class StockSim:
                 if data.buy >= win_price:
                     # When reaching the win_price, check if it still match win_standard
                     # if TRUE: Update the win_price for saving the processing fee
-                    if win_standard_valid and win_price < last_day_close_price * 1.05:
+                    if win_standard_valid and win_price < last_day_close_price * 1.07:
                         dbg_print('win and update the target again')
                         escape_tick = tick_after_seconds(tick, 600)
                         win_price, lose_price, escape_price = data.sell * 1.01, data.sell * 0.985, data.sell * self.tax_rate
+                        win_count += 1
+                        # Add record here for recognize the WIN but not sold case
+                        self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'WIN_CONTINUE')
                     else:
                         dbg_print('win')
                         money += data.buy * 1000
