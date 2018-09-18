@@ -49,10 +49,10 @@ def main():
     print df[df.buy_price < df.last_close_price]
 
     print df.groupby('reason').size()
-    high_price = {percent*0.5:df[df.buy_price >= df.last_close_price*(1+percent*0.005)].groupby('reason').size() for percent in range(11)}
+    high_price = {percent*0.5:sum(df[df.buy_price >= df.last_close_price*(1+percent*0.005)]['diff']) for percent in range(11)}
     print high_price
     
-    high_price = {t*0.1:df[df.TWA_current_magtitude > t*0.1].groupby('reason').size() for t in range(6)}
+    high_price = {t*0.1:sum(df[df.TWA_current_magtitude > t*0.1]['diff']) for t in range(6)}
     print high_price
 
     high_price = df[(df.TWA_current_magtitude > 0.1) & (df.buy_price >= df.last_close_price*(1+0.01))].groupby('reason').size()

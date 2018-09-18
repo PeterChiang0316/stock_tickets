@@ -152,6 +152,8 @@ class StockSim:
                         win_count += 1
                         # Add record here for recognize the WIN but not sold case
                         self.add_record(no, win_standard, buy_tick, tick, buy_price, data.buy, (data.buy - cost_price) * 1000, 'WIN_CONTINUE')
+                        cost_price = data.sell * self.tax_rate
+                        buy_tick, buy_price = tick, data.sell
                     else:
                         dbg_print('win')
                         money += data.buy * 1000
