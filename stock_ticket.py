@@ -306,9 +306,14 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--update', help='Get today\'s data', action='store_true')
+    parser.add_argument('--check', help='Check today\'s data', action='store_true')
     parser.add_argument('-pll', help='Use multiprocessing', action='store_true')
     parser.add_argument('-debug', help='Debug multiprocessing', action='store_true')
     args = parser.parse_args()
+
+    today = datetime.datetime.today().date()
+    year, month, day = today.year, today.month, today.day
+    today_date = '%d%0.2d%0.2d' % (year, month, day)
 
     if args.update:
         #sys.stdout = open('daily_update.log', 'w')
@@ -322,10 +327,6 @@ if __name__ == '__main__':
                 ship = Stock(s)
                 stock_finance = ship.get_stock_finance(force_update=True)
 
-                today = datetime.datetime.today().date()
-                year, month, day = today.year, today.month, today.day
-                today_date = '%d%0.2d%0.2d' % (year, month, day)
-
                 if today_date in stock_finance:
                     ship.update_daily_info()
                 else:
@@ -335,7 +336,11 @@ if __name__ == '__main__':
             finally:
                 time.sleep(5)
         exit(0)
-
+    elif args.check:
+        check_date = today_date
+        for s in set(stock_list):
+            if not os.path.exists(os.path.join('data', s, 'trans_'+check_date+'.json')):
+                print s, 'check fail'
     # Real simulation
     else:
 
