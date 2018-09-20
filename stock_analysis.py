@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from tools.stock_price_utility import Stock
 from tools.stock_price_utility import get_TWA_stock_price
 import datetime, tools, bisect, os
-
+import numpy as np
 
 def main():
     def get_last_close(e):
@@ -36,7 +36,18 @@ def main():
     df_list = [pd.read_csv(os.path.join('build', p)) for p in os.listdir('build')]
 
     df = df_list[0].append(df_list[1:], ignore_index=True)
+    l = np.array([])
 
+    df_summary = pd.read_csv(os.path.join('train_data.csv'))
+    df_summary = df_summary.sort_values(['stock', 'money'], ascending=[True, False])
+    for key in df_summary.stock.unique():
+        stock_df = df_summary[df_summary.stock == key]
+        avg = stock_df.money.quantile(0.75)
+        stock_df = stock_df[stock_df.money > avg]
+        l = np.append(l, stock_df.no.values)
+    print l
+
+    df = df[df.no.isin(l)]
     finance_dict = {s: Stock(str(s)).get_stock_finance() for s in df.stock.unique()}
     
     
@@ -49,13 +60,14 @@ def main():
     print df[df.buy_price < df.last_close_price]
 
     print df.groupby('reason').size()
-    high_price = {percent*0.5:sum(df[df.buy_price >= df.last_close_price*(1+percent*0.005)]['diff']) for percent in range(11)}
+    high_price = {percent*0.5:sum(df[df.buy_price >= df.last_close_price*(1+percent*0.005)]['diff'])/len(df[df.buy_price >= df.last_close_price*(1+percent*0.005)]['diff']) for percent in range(11)}
     print high_price
     
-    high_price = {t*0.1:sum(df[df.TWA_current_magtitude > t*0.1]['diff']) for t in range(6)}
+    high_price = {t*0.1:sum(df[df.TWA_current_magtitude > t*0.1]['diff'])/len(df[df.TWA_current_magtitude > t*0.1]['diff']) for t in range(6)}
     print high_price
 
     high_price = df[(df.TWA_current_magtitude > 0.1) & (df.buy_price >= df.last_close_price*(1+0.01))].groupby('reason').size()
+    #print sum(high_price['diff'])/len(high_price['diff'])
     print high_price
 
 if __name__ == '__main__':
