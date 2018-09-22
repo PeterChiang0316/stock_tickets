@@ -13,7 +13,7 @@ class StockSim:
     WIN_STANDARD = 1
     LOSE_STANDARD = 2
 
-    def __init__(self, stock, date, transaction_list, output_file, finance, last_finance, TWA):
+    def __init__(self, stock, date, transaction_list, output_file, finance, last_finance, TWA, TWA_finance):
         self.stock = stock
         self.cache = {}
         self.transaction_list = transaction_list
@@ -22,6 +22,7 @@ class StockSim:
         self.finance = finance
         self.last_finance = last_finance
         self.TWA = TWA
+        self.TWA_finance = TWA_finance
 
     def add_record(self, no, win_standard, buy_tick, result_tick, buy_price, sell_price, diff, reason):
 
@@ -213,7 +214,14 @@ class StockSim:
                 win_standard_valid = standard_test(tick, trace, win_standard, self.WIN_STANDARD)
                 lose_standard_valid = standard_test(tick, trace, win_standard, self.LOSE_STANDARD)
 
-                if win_standard_valid and not lose_standard_valid and data.sell > last_day_close_price:
+                time_string = '%04d' % (tick/100)
+                left = bisect.bisect_left(self.TWA.keys(), time_string)
+                current_TWA_price = self.TWA.values()[left-1]['deal_price']
+
+                left = bisect.bisect_left(self.TWA_finance.keys(), self.date)
+                TWA_last_close = self.TWA_finance.values()[left-1]['close_price']
+
+                if win_standard_valid and not lose_standard_valid and data.sell >= last_day_close_price * (1+0.01) and current_TWA_price > TWA_last_close*1.001:
 
                     cost_price = data.sell * self.tax_rate
                     money -= (cost_price * 1000)

@@ -258,11 +258,11 @@ def execute(s):
                 #if abs(last_finance['DIF_MACD']) < 0.5:
                 #    print '[SYSTEM] DIF_MACD too small'
                 #    continue
-                if other_date not in win_standard_dict or not win_standard_dict[other_date]:
-                    continue
+                #if other_date not in win_standard_dict or not win_standard_dict[other_date]:
+                #    continue
 
                 sim = StockSim(s, other_date, other_transaction, fp,
-                               stock_finance[other_date], last_finance, other_date_TWA)
+                               stock_finance[other_date], last_finance, other_date_TWA, TWA_finance)
 
                 money, wc, lc, tc, ec = sim.execute(current_number, money, win_standard, verbose=True)
 
@@ -288,13 +288,15 @@ def execute(s):
 
 
 
-def init(l, q, no):
+def init(l, q, no, twa):
     global lock
     global queue
     global global_no
+    global TWA_finance
     lock = l
     queue = q
     global_no = no
+    TWA_finance = twa
 
 if __name__ == '__main__':
 
@@ -303,17 +305,17 @@ if __name__ == '__main__':
                  '3443', '4906']
     stock_list += ['2915', '5264', '2105', '3673', '2542', '3044', '2610', '6116', '1319', '2059', '2356']
     stock_list += ['3017', '2485', '1536', '3376', '2603', '6285', '3665', '1476']
-    
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--update', help='Get today\'s data', action='store_true')
-    parser.add_argument('--check', help='Check today\'s data', action='store_true')
-    parser.add_argument('-pll', help='Use multiprocessing', action='store_true')
-    parser.add_argument('-debug', help='Debug multiprocessing', action='store_true')
-    args = parser.parse_args()
 
     today = datetime.datetime.today().date()
     year, month, day = today.year, today.month, today.day
     today_date = '%d%0.2d%0.2d' % (year, month, day)
+
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--update', help='Get today\'s data', action='store_true')
+    parser.add_argument('--check', help='Check today\'s data', action='store')
+    parser.add_argument('-pll', help='Use multiprocessing', action='store_true')
+    parser.add_argument('-debug', help='Debug multiprocessing', action='store_true')
+    args = parser.parse_args()
 
     if args.update:
         #sys.stdout = open('daily_update.log', 'w')
@@ -337,7 +339,8 @@ if __name__ == '__main__':
                 time.sleep(5)
         exit(0)
     elif args.check:
-        check_date = today_date
+        check_date = args.check
+        print 'Checking %s' % check_date
         for s in set(stock_list):
             if not os.path.exists(os.path.join('data', s, 'trans_'+check_date+'.json')):
                 print s, 'check fail'
@@ -346,7 +349,9 @@ if __name__ == '__main__':
 
         if not os.path.exists('build'): os.mkdir('build')
         tools.stock_price_utility.update_TWA_finance()
-        
+
+        TWA_finance = tools.stock_price_utility.json_load(os.path.join('data', 'TWA.json'))
+
         start_time = time.time()
 
         lock = Lock()
@@ -355,7 +360,7 @@ if __name__ == '__main__':
         
         if args.pll:
 
-            pool = Pool(initializer=init, initargs=(lock, queue, global_no))
+            pool = Pool(initializer=init, initargs=(lock, queue, global_no, TWA_finance))
             if args.debug:
                 import tblib.pickling_support
                 tblib.pickling_support.install()
